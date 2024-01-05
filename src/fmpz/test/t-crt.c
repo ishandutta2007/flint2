@@ -10,12 +10,11 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint.h"
+#include "test_helpers.h"
 #include "fmpz.h"
 #include "ulong_extras.h"
 
-
-int main(void)
+TEST_FUNCTION_START(fmpz_CRT, state)
 {
     slong i, j;
     int sign;
@@ -27,11 +26,6 @@ int main(void)
     fmpz_t mprod;
     fmpz_t r2, m2;
 
-    FLINT_TEST_INIT(state);
-
-    flint_printf("CRT....");
-    fflush(stdout);
-
     fmpz_init(input);
     fmpz_init(result);
     fmpz_init(r1);
@@ -39,7 +33,6 @@ int main(void)
     fmpz_init(r2);
     fmpz_init(m2);
     fmpz_init(mprod);
-
 
     for (i = 0; i < 1000 * flint_test_multiplier(); i++)
     {
@@ -71,6 +64,12 @@ int main(void)
         fmpz_mod(r1, input, m1);
         fmpz_mod(r2, input, m2);
 
+        if (sign && n_randint(state, 2))
+        {
+            /* If sign is set, fmpz_CRT allows -m_{1} <= r < m_{1}. Set r < 0.*/
+            fmpz_sub(r1, r1, m1);
+        }
+
         fmpz_CRT(result, r1, m1, r2, m2, sign);
 
         if (!fmpz_equal(result, input) || !_fmpz_is_canonical(result))
@@ -98,9 +97,5 @@ int main(void)
     fmpz_clear(m2);
     fmpz_clear(mprod);
 
-
-    FLINT_TEST_CLEANUP(state);
-
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

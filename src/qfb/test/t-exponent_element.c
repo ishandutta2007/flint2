@@ -1,32 +1,22 @@
-/*=============================================================================
-
-    This file is part of Antic.
-
-    Antic is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License (LGPL) as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. See <http://www.gnu.org/licenses/>.
-
-=============================================================================*/
-/******************************************************************************
-
+/*
     Copyright (C) 2012 William Hart
 
-******************************************************************************/
+    This file is part of FLINT.
 
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
+
+#include "test_helpers.h"
 #include "qfb.h"
 
-int main(void)
+TEST_FUNCTION_START(qfb_exponent_element, state)
 {
     int result;
-    flint_rand_t state;
     qfb * forms;
     slong i, k, i1, d, num;
-
-    printf("exponent_element....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* Check correct exponent is returned */
     for (i = 1; i < 500; i++)
@@ -98,9 +88,5 @@ int main(void)
         qfb_array_clear(&forms, num);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-
-    printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

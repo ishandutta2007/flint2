@@ -1,18 +1,13 @@
-/*=============================================================================
-
-    This file is part of Antic.
-
-    Antic is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License (LGPL) as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. See <http://www.gnu.org/licenses/>.
-
-=============================================================================*/
-/******************************************************************************
-
+/*
     Copyright (C) 2012 William Hart
 
-******************************************************************************/
+    This file is part of FLINT.
+
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
 
 #include "ulong_extras.h"
 #include "qfb.h"
@@ -47,7 +42,7 @@ slong qfb_reduced_forms_large(qfb ** forms, slong d)
     n_factor_t * fac;
 
     if (d >= 0)
-        flint_throw(FLINT_ERROR, "%s not implemented for positive discriminant\n", __FUNCTION__);
+        flint_throw(FLINT_ERROR, "%s not implemented for positive discriminant\n", __func__);
 
     alim = n_sqrt(-d/3); /* maximum a value to check */
 
@@ -177,7 +172,7 @@ slong qfb_reduced_forms(qfb ** forms, slong d)
     mp_limb_t * s;
 
     if (d >= 0)
-        flint_throw(FLINT_ERROR, "%s not implemented for positive discriminant\n", __FUNCTION__);
+        flint_throw(FLINT_ERROR, "%s not implemented for positive discriminant\n", __func__);
 
     blim = n_sqrt(-d/3); /* maximum a value to check */
 

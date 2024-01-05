@@ -1,26 +1,21 @@
 /*
     Copyright (C) 2017 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arb_poly.h"
 #include "acb_poly.h"
 
-int main(void)
+TEST_FUNCTION_START(arb_poly_product_roots_complex, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("product_roots_complex....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 2000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -90,8 +85,5 @@ int main(void)
         _acb_vec_clear(r3, len1 + 2 * len2);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

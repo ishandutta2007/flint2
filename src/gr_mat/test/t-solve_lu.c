@@ -6,24 +6,18 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "gr_mat.h"
 #include "gr_poly.h"
 
 FLINT_DLL extern gr_static_method_table _ca_methods;
 
-int main(void)
+TEST_GR_FUNCTION_START(gr_mat_solve_lu, state, count_success, count_unable, count_domain)
 {
     slong iter;
-    slong count_success = 0, count_unable = 0, count_domain = 0;
-    flint_rand_t state;
-
-    flint_printf("solve_lu....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 1000; iter++)
     {
@@ -101,8 +95,5 @@ int main(void)
 
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf(" [%wd success, %wd domain, %wd unable] PASS\n", count_success, count_domain, count_unable);
-    return 0;
+    TEST_GR_FUNCTION_END(state, count_success, count_unable, count_domain);
 }

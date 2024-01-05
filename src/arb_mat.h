@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2012 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #ifndef ARB_MAT_H
@@ -15,7 +15,7 @@
 #ifdef ARB_MAT_INLINES_C
 #define ARB_MAT_INLINE
 #else
-#define ARB_MAT_INLINE static __inline__
+#define ARB_MAT_INLINE static inline
 #endif
 
 #include "fmpq_types.h"
@@ -44,9 +44,7 @@ void arb_mat_clear(arb_mat_t mat);
 ARB_MAT_INLINE void
 arb_mat_swap(arb_mat_t mat1, arb_mat_t mat2)
 {
-    arb_mat_struct t = *mat1;
-    *mat1 = *mat2;
-    *mat2 = t;
+    FLINT_SWAP(arb_mat_struct, *mat1, *mat2);
 }
 
 ARB_MAT_INLINE void
@@ -323,8 +321,6 @@ void arb_mat_vector_mul_row(arb_ptr res, arb_srcptr v, const arb_mat_t A, slong 
 
 void arb_mat_vector_mul_col(arb_ptr res, const arb_mat_t A, arb_srcptr v, slong prec);
 
-void arb_mat_bilinear_form(arb_t res, const arb_mat_t A, arb_srcptr v1, arb_srcptr v2, slong prec);
-
 /* Solving */
 
 ARB_MAT_INLINE void
@@ -332,19 +328,10 @@ arb_mat_swap_rows(arb_mat_t mat, slong * perm, slong r, slong s)
 {
     if (r != s)
     {
-        arb_ptr u;
-        slong t;
-
         if (perm != NULL)
-        {
-            t = perm[s];
-            perm[s] = perm[r];
-            perm[r] = t;
-        }
+            FLINT_SWAP(slong, perm[r], perm[s]);
 
-        u = mat->rows[s];
-        mat->rows[s] = mat->rows[r];
-        mat->rows[r] = u;
+        FLINT_SWAP(arb_ptr, mat->rows[r], mat->rows[s]);
     }
 }
 

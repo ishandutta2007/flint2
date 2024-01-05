@@ -506,8 +506,13 @@ Scalar multiplication and division
 
 .. function:: void nmod_poly_scalar_mul_nmod(nmod_poly_t res, const nmod_poly_t poly, ulong c)
 
-    Sets ``res`` to ``(poly, len)`` multiplied by `c`,
-    where `c` is reduced modulo the modulus of ``poly``.
+    Sets ``res`` to ``poly`` multiplied by `c`. The element `c` is assumed
+    to be less than the modulus of ``poly``.
+
+.. function:: void nmod_poly_scalar_addmul_nmod(nmod_poly_t res, const nmod_poly_t poly, ulong c)
+
+    Adds ``poly`` multiplied by `c` to ``res``. The element `c` is assumed
+    to be less than the modulus of ``poly``.
 
 .. function:: void _nmod_poly_make_monic(mp_ptr output, mp_srcptr input, slong len, nmod_t mod)
 
@@ -1198,6 +1203,11 @@ Divisibility testing
     Returns `1` if `B` divides `A` and sets `Q` to the quotient. Otherwise
     returns `0` and sets `Q` to zero.
 
+.. function:: ulong nmod_poly_remove(nmod_poly_t f, const nmod_poly_t p)
+
+    Removes the highest possible power of ``p`` from ``f`` and
+    returns the exponent.
+
 
 Derivative and integral
 --------------------------------------------------------------------------------
@@ -1665,12 +1675,12 @@ Greatest common divisor
     polynomial `P` is defined to be `P`. Except in the case where
     the GCD is zero, the GCD `G` is made monic.
 
-.. function:: slong _nmod_poly_hgcd(mp_ptr *M, slong *lenM, mp_ptr A, slong *lenA, mp_ptr B, slong *lenB, mp_srcptr a, slong lena, mp_srcptr b, slong lenb, nmod_t mod)
+.. function:: slong _nmod_poly_hgcd(mp_ptr * M, slong * lenM, mp_ptr A, slong * lenA, mp_ptr B, slong * lenB, mp_srcptr a, slong lena, mp_srcptr b, slong lenb, nmod_t mod)
 
     Computes the HGCD of `a` and `b`, that is, a matrix `M`, a sign `\sigma`
     and two polynomials `A` and `B` such that
 
-    .. math ::
+    .. math::
 
 
         (A,B)^t = M^{-1} (a,b)^t, \sigma = \det(M),
@@ -1819,7 +1829,7 @@ Greatest common divisor
     `g(x) = b_n x^n + \dotsb + b_0` of degrees `m` and `n`, the resultant
     is defined to be
 
-    .. math ::
+    .. math::
             a_m^n b_n^m \prod_{(x, y) : f(x) = g(y) = 0} (x - y).
 
 
@@ -1872,7 +1882,7 @@ Greatest common divisor
     `g(x) = b_n x^n + \dotsb + b_0` of degrees `m` and `n`, the resultant
     is defined to be
 
-    .. math ::
+    .. math::
 
 
             a_m^n b_n^m \prod_{(x, y) : f(x) = g(y) = 0} (x - y).
@@ -1898,7 +1908,7 @@ Greatest common divisor
     `g(x) = b_n x^n + \dotsb + b_0` of degrees `m` and `n`, the resultant
     is defined to be
 
-    .. math ::
+    .. math::
 
 
             a_m^n b_n^m \prod_{(x, y) : f(x) = g(y) = 0} (x - y).
@@ -1907,7 +1917,7 @@ Greatest common divisor
     For convenience, we define the resultant to be equal to zero if either
     of the two polynomials is zero.
 
-.. function:: slong _nmod_poly_gcdinv(mp_limb_t *G, mp_limb_t *S, const mp_limb_t *A, slong lenA, const mp_limb_t *B, slong lenB, const nmod_t mod)
+.. function:: slong _nmod_poly_gcdinv(mp_limb_t * G, mp_limb_t * S, const mp_limb_t * A, slong lenA, const mp_limb_t * B, slong lenB, const nmod_t mod)
 
     Computes ``(G, lenA)``, ``(S, lenB-1)`` such that
     `G \cong S A \pmod{B}`, returning the actual length of `G`.
@@ -1922,7 +1932,7 @@ Greatest common divisor
 
     In the case that `A = 0 \pmod{B}`, returns `G = S = 0`.
 
-.. function:: int _nmod_poly_invmod(mp_limb_t *A, const mp_limb_t *B, slong lenB, const mp_limb_t *P, slong lenP, const nmod_t mod)
+.. function:: int _nmod_poly_invmod(mp_limb_t * A, const mp_limb_t * B, slong lenB, const mp_limb_t * P, slong lenP, const nmod_t mod)
 
     Attempts to set ``(A, lenP-1)`` to the inverse of ``(B, lenB)``
     modulo the polynomial ``(P, lenP)``.  Returns `1` if ``(B, lenB)``
@@ -1997,20 +2007,8 @@ Power series composition
 Power series reversion
 --------------------------------------------------------------------------------
 
-
-.. function:: void _nmod_poly_revert_series_lagrange(mp_ptr Qinv, mp_srcptr Q, slong n, nmod_t mod)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`. The arguments must
-    both have length ``n`` and may not be aliased.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation uses the Lagrange inversion formula.
-
-.. function:: void nmod_poly_revert_series_lagrange(nmod_poly_t Qinv, const nmod_poly_t Q, slong n)
+.. function:: void _nmod_poly_revert_series(mp_ptr Qinv, mp_srcptr Q, slong Qlen, slong n, nmod_t mod)
+              void nmod_poly_revert_series(nmod_poly_t Qinv, const nmod_poly_t Q, slong n)
 
     Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
     as a power series, i.e. computes `Q^{-1}` such that
@@ -2019,83 +2017,8 @@ Power series reversion
     It is required that `Q_0 = 0` and that `Q_1` as well as the integers
     `1, 2, \ldots, n-1` are invertible modulo the modulus.
 
-    This implementation uses the Lagrange inversion formula.
-
-.. function:: void _nmod_poly_revert_series_lagrange_fast(mp_ptr Qinv, mp_srcptr Q, slong n, nmod_t mod)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`. The arguments must
-    both have length ``n`` and may not be aliased.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation uses a reduced-complexity implementation
-    of the Lagrange inversion formula.
-
-.. function:: void nmod_poly_revert_series_lagrange_fast(nmod_poly_t Qinv, const nmod_poly_t Q, slong n)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation uses a reduced-complexity implementation
-    of the Lagrange inversion formula.
-
-.. function:: void _nmod_poly_revert_series_newton(mp_ptr Qinv, mp_srcptr Q, slong n, nmod_t mod)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`. The arguments must
-    both have length ``n`` and may not be aliased.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation uses Newton iteration [BrentKung1978]_.
-
-.. function:: void nmod_poly_revert_series_newton(nmod_poly_t Qinv, const nmod_poly_t Q, slong n)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation uses Newton iteration [BrentKung1978]_.
-
-.. function:: void _nmod_poly_revert_series(mp_ptr Qinv, mp_srcptr Q, slong n, nmod_t mod)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`. The arguments must
-    both have length ``n`` and may not be aliased.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation automatically chooses between the Lagrange
-    inversion formula and Newton iteration based on the size of the
-    input.
-
-.. function:: void nmod_poly_revert_series(nmod_poly_t Qinv, const nmod_poly_t Q, slong n)
-
-    Sets ``Qinv`` to the compositional inverse or reversion of ``Q``
-    as a power series, i.e. computes `Q^{-1}` such that
-    `Q(Q^{-1}(x)) = Q^{-1}(Q(x)) = x \bmod x^n`.
-
-    It is required that `Q_0 = 0` and that `Q_1` as well as the integers
-    `1, 2, \ldots, n-1` are invertible modulo the modulus.
-
-    This implementation automatically chooses between the Lagrange
-    inversion formula and Newton iteration based on the size of the
-    input.
-
+    Wraps :func:`_gr_poly_revert_series` which chooses automatically
+    between various algorithms.
 
 Square roots
 --------------------------------------------------------------------------------
@@ -2502,7 +2425,7 @@ Berlekamp-Massey Algorithm
     At any point in time, after, say, `n` points have been added, a call to :func:`nmod_berlekamp_massey_reduce` will
     calculate the polynomials `U`, `V` and `R` in the extended euclidean remainder sequence with
 
-    .. math ::
+    .. math::
 
         U x^n + V (a_1 x^{n-1} + a_{n-1} x + \cdots + a_n) = R, \quad \deg(U) < \deg(V) \le n/2, \quad \deg(R) < n/2.
 
@@ -2510,14 +2433,14 @@ Berlekamp-Massey Algorithm
     This class differs from :func:`fmpz_mod_poly_minpoly` in the following respect. Let `v_i` denote the coefficient of `x^i` in `V`.
     :func:`fmpz_mod_poly_minpoly` will return a polynomial `V` of lowest degree that annihilates the whole sequence `a_1, \dots, a_n` as
 
-    .. math ::
+    .. math::
 
         \sum_{i} v_i a_{j + i} = 0, \quad 1 \le j \le n - \deg(V).
 
     The cost is that a polynomial of degree `n-1` might be returned and the return is not generally uniquely determined by the input sequence.
     For the nmod_berlekamp_massey_t we have
 
-    .. math ::
+    .. math::
 
         \sum_{i,j} v_i a_{j+i} x^{-j} = -U + \frac{R}{x^n}\text{,}
 

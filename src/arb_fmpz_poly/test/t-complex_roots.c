@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2017 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpz_poly_factor.h"
 #include "fmpq_poly.h"
 #include "acb.h"
@@ -91,15 +92,9 @@ check_roots(const fmpz_poly_t poly, acb_srcptr roots, slong prec)
     arb_clear(lead);
 }
 
-int main(void)
+TEST_FUNCTION_START(arb_fmpz_poly_complex_roots, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("complex_roots....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 500 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -205,9 +200,22 @@ int main(void)
         fmpz_clear(t);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
-}
+    /* divide by zero in D-K iteration */
+    {
+        fmpz_poly_t f;
+        acb_ptr roots;
 
+        fmpz_poly_init(f);
+        roots = _acb_vec_init(6);
+
+        fmpz_poly_set_str(f, "7  25402042698578724632715842150384812072165708201873598515430741927709434502441548044497536658582884343075517644457858427539077202038196334089177500850739920720211950909770464886080670804176754154963931850468594331583498 223893180314223240984084491888407141086932132045832889810633599526603312517647486257597642989561630621890634231277838275174064496550528961859898776882676932807021286 795640482736635886180831008959046125790483017543686711742925168363012610075751154572719364427044897243091617811844423305126322668210906163297113908677853824166006037 4675174622252362090426964349867694514717613116237971666947773542341728151885745558219487022927593367256013888828 8306993067199362953716207209584242447525211917662146954370874791469552420765132896500330153494280277905784766392 24405899409125496050877753569127928027275807342290477559552 28910098348753799787840354537641329148612896619499101692036");
+
+        arb_fmpz_poly_complex_roots(roots, f, 0, 128);
+        check_roots(f, roots, 512);
+
+        _acb_vec_clear(roots, 6);
+        fmpz_poly_clear(f);
+    }
+
+    TEST_FUNCTION_END(state);
+}

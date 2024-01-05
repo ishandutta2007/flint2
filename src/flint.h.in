@@ -57,11 +57,6 @@
 # endif
 #endif
 
-#ifndef __GNUC__
-# define __asm__     asm
-# define __inline__  inline
-#endif
-
 #ifdef va_start
 # define FLINT_HAVE_VA_LIST
 #endif
@@ -73,23 +68,17 @@
 # define FLINT_HAVE_FILE
 #endif
 
-#ifdef FLINT_HAVE_CONSTANT_P
-# define FLINT_CONSTANT_P __builtin_constant_p
-#else
-# define FLINT_CONSTANT_P(x) 0
-#endif
-
 #ifdef FLINT_INLINES_C
 # define FLINT_INLINE
 #else
-# define FLINT_INLINE static __inline__
+# define FLINT_INLINE static inline
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* flint version number */
+/* FLINT version number */
 
 #define __FLINT_VERSION @FLINT_MAJOR@
 #define __FLINT_VERSION_MINOR @FLINT_MINOR@
@@ -97,10 +86,6 @@ extern "C" {
 #define FLINT_VERSION "@FLINT_VERSION_FULL@"
 #define __FLINT_RELEASE_NUM(a,b,c) ((a)*10000 + (b)*100 + (c))
 #define __FLINT_RELEASE __FLINT_RELEASE_NUM(__FLINT_VERSION, __FLINT_VERSION_MINOR, __FLINT_VERSION_PATCHLEVEL)
-
-#if __GNU_MP_VERSION < 5
-#error GMP 5.0.0 or MPIR 2.6.0 or later are required
-#endif
 
 FLINT_DLL extern char flint_version[];
 
@@ -117,14 +102,11 @@ typedef struct __FLINT_FILE FLINT_FILE;
 #define FLINT_ASSERT(param)
 #endif
 
-#include "longlong.h"
-
 #if defined(__GNUC__)
-# define FLINT_FORCE_INLINE static __attribute__((always_inline)) __inline__
+# define FLINT_FORCE_INLINE static __attribute__((always_inline)) inline
 # define FLINT_STATIC_NOINLINE static __attribute__((noinline))
 # define FLINT_UNUSED(x) UNUSED_ ## x __attribute__((unused))
 # define FLINT_SET_BUT_UNUSED(x) x __attribute__((unused))
-# define FLINT_NORETURN __attribute__ ((noreturn))
 # define FLINT_CONST __attribute__ ((const))
 # define FLINT_WARN_UNUSED __attribute__((warn_unused_result))
 # define FLINT_UNLIKELY(x) __builtin_expect((x),0)
@@ -135,31 +117,43 @@ typedef struct __FLINT_FILE FLINT_FILE;
 # define FLINT_OPTIMIZE_NESTED_2(part) FLINT_OPTIMIZE_NESTED_3(GCC optimize part)
 # define FLINT_OPTIMIZE_NESTED_1(part) FLINT_OPTIMIZE_NESTED_2(#part)
 # define FLINT_OPTIMIZE(x) FLINT_OPTIMIZE_NESTED_1(x)
+# define FLINT_CONSTANT_P __builtin_constant_p
+# define FLINT_UNREACHABLE __builtin_unreachable()
 #else
 # define __attribute__(x)
-# define FLINT_FORCE_INLINE static __inline__
+# if defined(_MSC_VER)
+#  define FLINT_FORCE_INLINE static __forceinline
+#  define FLINT_UNREACHABLE __assume(0)
+# else
+#  define FLINT_FORCE_INLINE static inline
+#  define FLINT_UNREACHABLE
+# endif
 # define FLINT_STATIC_NOINLINE static
 # define FLINT_UNUSED(x) x
 # define FLINT_SET_BUT_UNUSED(x) x
 # define FLINT_WARN_UNUSED
-# define FLINT_NORETURN
 # define FLINT_CONST
 # define FLINT_UNLIKELY(x) (x)
 # define FLINT_LIKELY(x) (x)
 # define FLINT_PUSH_OPTIONS
 # define FLINT_POP_OPTIONS
 # define FLINT_OPTIMIZE(x)
+# define FLINT_CONSTANT_P(x) 0
+#endif
+
+#if defined(__cplusplus)
+# define FLINT_NORETURN [[noreturn]]
+#elif __STDC_VERSION__ < 202300L
+# define FLINT_NORETURN _Noreturn
+#else
+# define FLINT_NORETURN noreturn
 #endif
 
 #if FLINT_USES_TLS
-# if defined(__GNUC__)
-#  define FLINT_TLS_PREFIX __thread
-# elif __STDC_VERSION__ >= 201112L
+# if __STDC_VERSION__ < 202300L && !defined(__cplusplus)
 #  define FLINT_TLS_PREFIX _Thread_local
-# elif defined(_MSC_VER)
-#  define FLINT_TLS_PREFIX __declspec(thread)
 # else
-#  error "thread local prefix defined in C11 or later"
+#  define FLINT_TLS_PREFIX thread_local
 # endif
 #else
 # define FLINT_TLS_PREFIX
@@ -198,6 +192,8 @@ typedef struct __FLINT_FILE FLINT_FILE;
 # define FLINT_D_BITS 31
 #endif
 
+#include "longlong.h"
+
 void * flint_malloc(size_t size);
 void * flint_realloc(void * ptr, size_t size);
 void * flint_calloc(size_t num, size_t size);
@@ -219,7 +215,7 @@ void __flint_get_memory_functions(void *(**alloc_func) (size_t),
 FLINT_NORETURN void flint_abort(void);
 
 /* If user want to set change abort function from `abort' */
-void flint_set_abort(FLINT_NORETURN void (*func)(void));
+void flint_set_abort(void (*func)(void));
 
 int flint_get_num_threads(void);
 void flint_set_num_threads(int num_threads);
@@ -323,49 +319,7 @@ ulong n_randtest_not_zero(flint_rand_t);
 #define FLINT_ABS(x) ((slong)(x) < 0 ? (-(x)) : (x))
 #define FLINT_SIGN_EXT(x) (-(ulong)((slong)(x) < 0))
 #define FLINT_SGN(x) ((0 < (slong)(x)) - ((slong)(x) < 0))
-
-#define MP_PTR_SWAP(x, y) \
-    do { \
-        mp_limb_t * __txxx; \
-        __txxx = x; \
-        x = y; \
-        y = __txxx; \
-    } while (0)
-
-#define SLONG_SWAP(A, B)    \
-    do {                    \
-        slong __t_m_p_ = A; \
-        A = B;              \
-        B = __t_m_p_;       \
-    } while (0)
-
-#define ULONG_SWAP(A, B)    \
-    do {                    \
-        ulong __t_m_p_ = A; \
-        A = B;              \
-        B = __t_m_p_;       \
-    } while (0)
-
-#define MP_LIMB_SWAP(A, B)      \
-    do {                        \
-        mp_limb_t __t_m_p_ = A; \
-        A = B;                  \
-        B = __t_m_p_;           \
-    } while (0)
-
-#define DOUBLE_SWAP(A, B)    \
-    do {                     \
-        double __t_m_p_ = A; \
-        A = B;               \
-        B = __t_m_p_;        \
-    } while (0)
-
-#define PTR_SWAP(T, A, B)    \
-    do {                    \
-        T* __t_m_p_ = A; \
-        A = B;              \
-        B = __t_m_p_;       \
-    } while (0)
+#define FLINT_SWAP(T, x, y) do { T _swap_t = (x); (x) = (y); (y) = _swap_t; } while(0)
 
 #define r_shift(in, shift) \
     ((shift == FLINT_BITS) ? WORD(0) : ((in) >> (shift)))
@@ -374,7 +328,7 @@ ulong n_randtest_not_zero(flint_rand_t);
     ((shift == FLINT_BITS) ? WORD(0) : ((in) << (shift)))
 
 /* Beware when using the unsigned return value in signed arithmetic */
-static __inline__
+static inline
 mp_limb_t FLINT_BIT_COUNT(mp_limb_t x)
 {
    mp_limb_t zeros = FLINT_BITS;
@@ -456,15 +410,6 @@ mp_limb_t FLINT_BIT_COUNT(mp_limb_t x)
       __tmp_root = __tmp_root->next; \
    }
 
-/* compatibility between gmp and mpir */
-#ifndef mpn_com_n
-#define mpn_com_n mpn_com
-#endif
-
-#ifndef mpn_neg_n
-#define mpn_neg_n mpn_neg
-#endif
-
 int parse_fmt(int * floating, const char * fmt);
 
 int flint_printf(const char * str, ...); /* flint version of printf */
@@ -481,20 +426,23 @@ int flint_fprintf(FILE * f, const char * str, ...); /* flint version of fprintf 
 int flint_fscanf(FILE * f, const char * str, ...); /* flint version of fscanf */
 #endif
 
+#if defined(FLINT_HAVE_VA_LIST) && defined(FLINT_HAVE_FILE)
+int flint_vfprintf(FILE * f, const char * str, va_list ap);
+#endif
+
+#include "exception.h"
+
 FLINT_INLINE slong flint_mul_sizes(slong x, slong y)
 {
     ulong hi, lo;
 
     umul_ppmm(hi, lo, (ulong) x, (ulong) y);
+
     if (hi != 0 || lo > WORD_MAX)
-    {
-        flint_printf("Exception (flint). Overflow creating size %wd x %wd object.\n", x, y);
-        flint_abort();
-    }
+        flint_throw(FLINT_OVERFLOW, "Overflow creating size %wd x %wd object.\n", x, y);
+
     return lo;
 }
-
-#include "exception.h"
 
 /* Defined ahead of nmod.h, fmpz.h and fmpq.h so that the types are usable in
  * prototypes without importing those headers */

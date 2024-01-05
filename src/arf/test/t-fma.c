@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2012 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arf.h"
 
 int
@@ -27,15 +28,9 @@ arf_fma_naive(arf_t res, const arf_t x, const arf_t y, const arf_t z, slong prec
     return inexact;
 }
 
-int main(void)
+TEST_FUNCTION_START(arf_fma, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("fma....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 10000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -134,8 +129,5 @@ int main(void)
         arf_clear(res2);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

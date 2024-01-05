@@ -16,7 +16,7 @@
 #ifdef FMPZ_MAT_INLINES_C
 #define FMPZ_MAT_INLINE
 #else
-#define FMPZ_MAT_INLINE static __inline__
+#define FMPZ_MAT_INLINE static inline
 #endif
 
 #include "fmpz_types.h"
@@ -85,25 +85,16 @@ int fmpz_mat_is_square(const fmpz_mat_t mat)
 void fmpz_mat_zero(fmpz_mat_t mat);
 void fmpz_mat_one(fmpz_mat_t mat);
 
-/* Windows and concatenation */
+/* Windows and concatenation *************************************************/
 
-void fmpz_mat_window_init(fmpz_mat_t window, const fmpz_mat_t mat, slong r1,
-    slong c1, slong r2, slong c2);
-
+void fmpz_mat_window_init(fmpz_mat_t window, const fmpz_mat_t mat, slong r1, slong c1, slong r2, slong c2);
 void fmpz_mat_window_clear(fmpz_mat_t window);
 
-void fmpz_mat_concat_horizontal(fmpz_mat_t res,
-                           const fmpz_mat_t mat1,  const fmpz_mat_t mat2);
+void _fmpz_mat_window_readonly_init_strip_initial_zero_rows(fmpz_mat_t A, const fmpz_mat_t B);
+#define _fmpz_mat_window_readonly_clear(A) /* Do nothing */
 
-void fmpz_mat_concat_vertical(fmpz_mat_t res,
-                           const fmpz_mat_t mat1,  const fmpz_mat_t mat2);
-
-void _fmpz_mat_read_only_window_init_strip_initial_zero_rows(
-                                             fmpz_mat_t A, const fmpz_mat_t B);
-
-FMPZ_MAT_INLINE void _fmpz_mat_read_only_window_clear(fmpz_mat_t A)
-{
-}
+void fmpz_mat_concat_horizontal(fmpz_mat_t res, const fmpz_mat_t mat1, const fmpz_mat_t mat2);
+void fmpz_mat_concat_vertical(fmpz_mat_t res, const fmpz_mat_t mat1, const fmpz_mat_t mat2);
 
 /* Input and output  *********************************************************/
 
@@ -260,19 +251,10 @@ void fmpz_mat_swap_rows(fmpz_mat_t mat, slong * perm, slong r, slong s)
 {
     if (r != s && !fmpz_mat_is_empty(mat))
     {
-        fmpz * u;
-        slong t;
+        if (perm != NULL)
+            FLINT_SWAP(slong, perm[r], perm[s]);
 
-        if (perm)
-        {
-            t = perm[s];
-            perm[s] = perm[r];
-            perm[r] = t;
-        }
-
-        u = mat->rows[s];
-        mat->rows[s] = mat->rows[r];
-        mat->rows[r] = u;
+        FLINT_SWAP(fmpz *, mat->rows[r], mat->rows[s]);
     }
 }
 
@@ -358,8 +340,7 @@ void fmpz_mat_charpoly(fmpz_poly_t cp, const fmpz_mat_t mat)
 {
    if (mat->r != mat->c)
    {
-       flint_printf("Exception (nmod_mat_charpoly).  Non-square matrix.\n");
-       flint_abort();
+       flint_throw(FLINT_ERROR, "Exception (nmod_mat_charpoly).  Non-square matrix.\n");
    }
 
    fmpz_mat_charpoly_modular(cp, mat);
@@ -382,8 +363,7 @@ void fmpz_mat_minpoly(fmpz_poly_t cp, const fmpz_mat_t mat)
 {
    if (mat->r != mat->c)
    {
-       flint_printf("Exception (fmpz_mat_minpoly).  Non-square matrix.\n");
-       flint_abort();
+       flint_throw(FLINT_ERROR, "Exception (fmpz_mat_minpoly).  Non-square matrix.\n");
    }
 
    fmpz_mat_minpoly_modular(cp, mat);

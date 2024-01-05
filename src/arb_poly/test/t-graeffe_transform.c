@@ -1,28 +1,23 @@
 /*
     Copyright (C) 2013 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arb_poly.h"
 
-int main(void)
+TEST_FUNCTION_START(arb_poly_graeffe_transform, state)
 {
     slong iter;
-    flint_rand_t state;
     arb_poly_t a, b, c;
     arb_ptr roots;
     arb_t leading;
-
-    flint_printf("graeffe_transform....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     arb_poly_init(a);
     arb_poly_init(b);
@@ -87,9 +82,5 @@ int main(void)
 
     arb_clear(leading);
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

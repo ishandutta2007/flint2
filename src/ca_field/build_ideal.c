@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2020 Fredrik Johansson
 
-    This file is part of Calcium.
+    This file is part of FLINT.
 
-    Calcium is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include <stdio.h>
@@ -35,7 +35,7 @@ acb_multi_lindep(fmpz_mat_t rel, acb_srcptr vec, slong len, int check, slong pre
     mag_t max_size, max_rad, tmpmag;
 
     if (fmpz_mat_nrows(rel) != 0 || fmpz_mat_ncols(rel) != 0)
-        flint_abort();
+        flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
     fmpz_mat_clear(rel);
 
@@ -189,8 +189,7 @@ _ca_field_ideal_insert_clear_mpoly(ca_field_t K, fmpz_mpoly_t poly, fmpz_mpoly_c
 {
     if (poly->length == 0)
     {
-        flint_printf("ERROR: inserting the zero polynomial into ideal\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "ERROR: inserting the zero polynomial into ideal\n");
     }
 
     if (fmpz_sgn(poly->coeffs) < 0)
@@ -643,7 +642,7 @@ qqbar_end:
                 }
                 else
                 {
-                    flint_abort();
+                    flint_throw(FLINT_ERROR, "(%s)\n", __func__);
                 }
 
                 ca_mul_fmpz(u, u, rel + i, ctx);
@@ -815,7 +814,7 @@ ca_field_build_ideal_multiplicative(ca_field_t K, ca_ctx_t ctx)
             }
             else
             {
-                flint_abort();
+                flint_throw(FLINT_ERROR, "(%s)\n", __func__);
             }
         }
 
@@ -1009,7 +1008,7 @@ ca_field_build_ideal(ca_field_t K, ca_ctx_t ctx)
                 t = CA_EXT_FUNC_ARGS(x);
 
                 if (CA_IS_SPECIAL(t))
-                    flint_abort();
+                    flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
                 L = CA_FIELD(t, ctx);
                 L_len = CA_FIELD_LENGTH(L);

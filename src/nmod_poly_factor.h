@@ -19,7 +19,7 @@
 #ifdef NMOD_POLY_FACTOR_INLINES_C
 #define NMOD_POLY_FACTOR_INLINE
 #else
-#define NMOD_POLY_FACTOR_INLINE static __inline__
+#define NMOD_POLY_FACTOR_INLINE static inline
 #endif
 
 #include "limb_types.h"
@@ -84,8 +84,6 @@ int nmod_poly_factor_equal_deg_prob(nmod_poly_t factor,
 
 void nmod_poly_factor_distinct_deg(nmod_poly_factor_t res,
                                    const nmod_poly_t poly, slong * const *degs);
-
-ulong nmod_poly_remove(nmod_poly_t f, const nmod_poly_t p);
 
 void nmod_poly_factor_distinct_deg_threaded(nmod_poly_factor_t res,
                                   const nmod_poly_t poly, slong * const *degs);

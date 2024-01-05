@@ -18,7 +18,7 @@
 # undef fmpz_mod_ctx_get_modulus_mpz_read_only
 #endif
 
-static __inline__ void
+static inline void
 fmpz_mod_ctx_get_modulus_mpz_read_only(mpz_t m, const fmpz_mod_ctx_t ctx)
 {
     const fmpz * p = fmpz_mod_ctx_modulus(ctx);
@@ -119,7 +119,7 @@ void _fmpz_mod_mpoly_mul_johnson1(
                     *store++ = x->i;
                     *store++ = x->j;
                     hind[x->i] |= WORD(1);
-                    mpn_mul_n(t_d, Bcoeffs_packed + n*x->i,
+                    flint_mpn_mul_n(t_d, Bcoeffs_packed + n*x->i,
                                    Ccoeffs_packed + n*x->j, n);
                     acc_d[2*n] += mpn_add_n(acc_d, acc_d, t_d, 2*n);
                 } while ((x = x->next) != NULL);
@@ -329,7 +329,7 @@ void _fmpz_mod_mpoly_mul_johnson(
                     *store++ = x->i;
                     *store++ = x->j;
                     hind[x->i] |= WORD(1);
-                    mpn_mul_n(t_d, Bcoeffs_packed + n*x->i,
+                    flint_mpn_mul_n(t_d, Bcoeffs_packed + n*x->i,
                                    Ccoeffs_packed + n*x->j, n);
                     acc_d[2*n] += mpn_add_n(acc_d, acc_d, t_d, 2*n);
                 } while ((x = x->next) != NULL);

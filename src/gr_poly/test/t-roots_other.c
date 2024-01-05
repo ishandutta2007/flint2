@@ -6,23 +6,18 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
 #include "gr_vec.h"
 #include "gr_poly.h"
 
-int main(void)
+TEST_FUNCTION_START(gr_poly_roots_other, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("roots_other....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 10000; iter++)
     {
@@ -103,8 +98,5 @@ int main(void)
         gr_ctx_clear(ZZ);
     }
 
-    flint_randclear(state);
-    flint_cleanup_master();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

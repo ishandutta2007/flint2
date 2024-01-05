@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2012 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "arb.h"
@@ -16,7 +16,7 @@ arb_get_interval_fmpz_2exp(fmpz_t a, fmpz_t b, fmpz_t exp, const arb_t x)
 {
     if (!arb_is_finite(x))
     {
-        flint_throw(FLINT_ERROR, "expected finite input in %s\n", __FUNCTION__);
+        flint_throw(FLINT_ERROR, "expected finite input in %s\n", __func__);
     }
     else if (arb_is_exact(x))
     {
@@ -46,7 +46,7 @@ arb_get_interval_fmpz_2exp(fmpz_t a, fmpz_t b, fmpz_t exp, const arb_t x)
         shift = _fmpz_sub_small(exp, tmp);
 
         if (FLINT_ABS(shift) >= WORD_MAX / 2)
-            flint_throw(FLINT_ERROR, "too large shift in %s\n", __FUNCTION__);
+            flint_throw(FLINT_ERROR, "too large shift in %s\n", __func__);
 
         if (shift >= 0)
         {

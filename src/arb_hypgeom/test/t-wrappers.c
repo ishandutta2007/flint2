@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2016 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arb_hypgeom.h"
 
 void
@@ -23,15 +24,8 @@ TEST(const arb_t x1, const arb_t x2, const char * s)
     }
 }
 
-int main(void)
+TEST_FUNCTION_START(arb_hypgeom_wrappers, state)
 {
-    flint_rand_t state;
-
-    flint_printf("wrappers....");
-    fflush(stdout);
-
-    flint_randinit(state);
-
     {
         arb_t a, b, c, d, z, r, u, v;
         slong prec;
@@ -276,9 +270,5 @@ int main(void)
         arb_clear(v);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

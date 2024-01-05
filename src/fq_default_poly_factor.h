@@ -16,11 +16,11 @@
 #ifdef FQ_DEFAULT_POLY_FACTOR_INLINES_C
 #define FQ_DEFAULT_POLY_FACTOR_INLINE
 #else
-#define FQ_DEFAULT_POLY_FACTOR_INLINE static __inline__
+#define FQ_DEFAULT_POLY_FACTOR_INLINE static inline
 #endif
 
 #include "thread_pool.h"
-#include "nmod_mat.h"
+#include "nmod_poly_factor.h"
 #include "fmpz_mod_poly_factor.h"
 #include "fq_poly_factor.h"
 #include "fq_nmod_poly_factor.h"
@@ -582,13 +582,11 @@ void fq_default_poly_factor_split_single(fq_default_poly_t linfactor,
     }
     else if (ctx->type == FQ_DEFAULT_NMOD)
     {
-        flint_printf("operation not implemented");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "operation not implemented");
     }
     else if (ctx->type == FQ_DEFAULT_FMPZ_MOD)
     {
-        flint_printf("operation not implemented");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "operation not implemented");
     }
     else
     {

@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2013 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "arb.h"
@@ -46,8 +46,7 @@ arb_set_interval_arf(arb_t x, const arf_t a, const arf_t b, slong prec)
 
     if (arf_sgn(t) < 0)
     {
-        flint_printf("exception: arb_set_interval_arf: endpoints not ordered\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "exception: arb_set_interval_arf: endpoints not ordered\n");
     }
 
     arf_get_mag(arb_radref(x), t);

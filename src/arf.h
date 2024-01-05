@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2014 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #ifndef ARF_H
@@ -15,7 +15,7 @@
 #ifdef ARF_INLINES_C
 #define ARF_INLINE
 #else
-#define ARF_INLINE static __inline__
+#define ARF_INLINE static inline
 #endif
 
 #include "mag.h"
@@ -323,12 +323,7 @@ int arf_cmp_d(const arf_t x, double y);
 ARF_INLINE void
 arf_swap(arf_t y, arf_t x)
 {
-    if (x != y)
-    {
-        arf_struct t = *x;
-        *x = *y;
-        *y = t;
-    }
+    FLINT_SWAP(arf_struct, *x, *y);
 }
 
 void arf_set(arf_t y, const arf_t x);
@@ -1090,8 +1085,7 @@ arf_mag_add_ulp(mag_t z, const mag_t x, const arf_t y, slong prec)
 {
     if (ARF_IS_SPECIAL(y))
     {
-        flint_printf("error: ulp error not defined for special value!\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "error: ulp error not defined for special value!\n");
     }
     else if (MAG_IS_LAGOM(z) && MAG_IS_LAGOM(x) && ARF_IS_LAGOM(y))
     {
@@ -1112,8 +1106,7 @@ arf_mag_set_ulp(mag_t z, const arf_t y, slong prec)
 {
     if (ARF_IS_SPECIAL(y))
     {
-        flint_printf("error: ulp error not defined for special value!\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "error: ulp error not defined for special value!\n");
     }
     else
     {

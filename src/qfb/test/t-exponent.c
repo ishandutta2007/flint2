@@ -1,32 +1,22 @@
-/*=============================================================================
-
-    This file is part of Antic.
-
-    Antic is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License (LGPL) as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. See <http://www.gnu.org/licenses/>.
-
-=============================================================================*/
-/******************************************************************************
-
+/*
     Copyright (C) 2012 William Hart
 
-******************************************************************************/
+    This file is part of FLINT.
 
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
+
+#include "test_helpers.h"
 #include "qfb.h"
 
-int main(void)
+TEST_FUNCTION_START(qfb_exponent, state)
 {
     int result;
-    flint_rand_t state;
     qfb * forms;
     slong i, k, i1, d, num;
-
-    printf("exponent....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* Check exponent divides class number */
     for (i = 1; i < 1000; i++)
@@ -62,7 +52,7 @@ int main(void)
               printf("FAIL:\n");
               printf("Exponent does not divide class number\n");
               printf("Discriminant: "); fmpz_print(D); printf("\n");
-              printf("%ld does not divide %ld\n", e, num);
+              flint_printf("%wd does not divide %wd\n", e, num);
               flint_abort();
            }
 
@@ -77,7 +67,7 @@ int main(void)
                  printf("Exponent does not annihilate form\n");
                  printf("Discriminant: "); fmpz_print(D); printf("\n");
                  printf("Form: "); qfb_print(forms + i1); printf("\n");
-                 printf("Exponent: %ld\n", e);
+                 flint_printf("Exponent: %wd\n", e);
                  flint_abort();
               }
            }
@@ -90,9 +80,5 @@ int main(void)
         qfb_array_clear(&forms, num);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-
-    printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

@@ -15,7 +15,6 @@
 #include "fmpq.h"
 
 #define FMPQ_RECONSTRUCT_ARRAY_LIMIT 12
-#define FMPQ_RECONSTRUCT_HGCD_CUTOFF 500
 
 /*
     hgcd for two-limb input, individual quotients not written
@@ -558,8 +557,8 @@ gauss:
 
     /* (m11, m12) = (m12 + Q*m11, m11), use R for temp */
     mdet *= -1;
-    ex0 = (Qlen > m_len) ? mpn_mul(R, Q, Qlen, m11, m_len)
-                         : mpn_mul(R, m11, m_len, Q, Qlen);
+    ex0 = (Qlen > m_len) ? flint_mpn_mul(R, Q, Qlen, m11, m_len)
+                         : flint_mpn_mul(R, m11, m_len, Q, Qlen);
     m_len = Qlen + m_len - (ex0 == 0);
     ex0 = mpn_add_n(R, R, m12, m_len);
     R[m_len] = ex0;
@@ -769,8 +768,8 @@ again:
     /* a = s; b = t */
     s->_mp_size = s_len;
     t->_mp_size = t_len;
-    FLINT_MPZ_PTR_SWAP(a, s);
-    FLINT_MPZ_PTR_SWAP(b, t);
+    FLINT_SWAP(mpz_ptr, a, s);
+    FLINT_SWAP(mpz_ptr, b, t);
 
     /* so a > n. see if further a > n >= b. */
     if (t_len < n_len || (t_len == n_len && mpn_cmp(t_ptr, n_ptr, n_len) <= 0))

@@ -1,26 +1,23 @@
 /*
     Copyright (C) 2016 Pascal Molin
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "acb_dirichlet.h"
 
-int main(void)
+TEST_FUNCTION_START(acb_dirichlet_gauss, state)
 {
     slong prec = 128;
     ulong q;
 
-    flint_printf("gauss....");
-    fflush(stdout);
-
     /* check Gauss sums */
-
     for (q = 3; q < 250; q ++)
     {
         dirichlet_group_t G;
@@ -75,7 +72,5 @@ int main(void)
         dirichlet_char_clear(chi);
     }
 
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

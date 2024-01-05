@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "gr_mat.h"
@@ -22,16 +22,10 @@ gr_mat_swap_cols(gr_mat_t mat, slong * perm, slong r, slong s, gr_ctx_t ctx)
         slong sz = ctx->sizeof_elem;
 
         if (perm != NULL)
-        {
-            t = perm[s];
-            perm[s] = perm[r];
-            perm[r] = t;
-        }
+            FLINT_SWAP(slong, perm[r], perm[s]);
 
         for (t = 0; t < mat->r; t++)
-        {
             gr_swap(GR_MAT_ENTRY(mat, t, r, sz), GR_MAT_ENTRY(mat, t, s, sz), ctx);
-        }
     }
 
     return GR_SUCCESS;

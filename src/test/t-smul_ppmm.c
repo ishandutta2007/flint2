@@ -9,19 +9,14 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint.h"
 #include "ulong_extras.h"
+#include "test_helpers.h"
 
-int main(void)
+TEST_FUNCTION_START(smul_ppmm, state)
 {
    int i, result;
-   FLINT_TEST_INIT(state);
 
-
-   flint_printf("smul_ppmm....");
-   fflush(stdout);
-
-   for (i = 0; i < 1000000; i++)
+   for (i = 0; i < 100000 * flint_test_multiplier(); i++)
    {
       mp_limb_t ph1, pl1, ph2, pl2, pl2old, n1, n2, m1, m2, bit;
       int j, sign;
@@ -69,17 +64,12 @@ int main(void)
       result = ((ph2 == ph1) && (pl2 == pl1));
 
       if (!result)
-      {
-         flint_printf("FAIL:\n");
-         flint_printf("m1 = %wu, m2 = %wu\n", n1, n2);
-         flint_printf("ph2 = %wu, ph1 = %wu, pl2 = %wu, pl1 = %wu\n", ph2, ph1, pl2, pl1);
-         fflush(stdout);
-         flint_abort();
-      }
+         flint_throw(FLINT_TEST_FAIL,
+                 "Inputs: u = %wd, v = %wd\n\n"
+                 "Got:      r1 = %wd, r0 = %wd\n"
+                 "Expected: r1 = %wd, r0 = %wd\n",
+                 n1, n2, ph1, pl1, ph2, pl2);
    }
 
-   FLINT_TEST_CLEANUP(state);
-
-   flint_printf("PASS\n");
-   return 0;
+   TEST_FUNCTION_END(state);
 }

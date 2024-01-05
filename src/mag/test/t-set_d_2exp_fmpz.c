@@ -1,18 +1,23 @@
 /*
     Copyright (C) 2014 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arf.h"
 #include "double_extras.h"
 #include "mag.h"
 
+/* Defined in t-d_log_lower_bound.c, t-d_log_upper_bound.c, t-set_d_2exp_fmpz.c
+ * and t-set_d.c */
+#ifndef d_randtest2
+#define d_randtest2 d_randtest2
 /* XXX: d_randtest is not good enough */
 
 #define EXP_MINUS_32 2.3283064365386962891e-10
@@ -41,16 +46,11 @@ d_randtest2(flint_rand_t state)
 
     return t;
 }
+#endif
 
-int main(void)
+TEST_FUNCTION_START(mag_set_d_2exp_fmpz, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("set_d_2exp_fmpz....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 100000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -124,9 +124,5 @@ int main(void)
         mag_clear(m);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

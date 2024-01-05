@@ -1,31 +1,31 @@
 /*
     Copyright (C) 2020 D.H.J. Polymath
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "acb_dirichlet.h"
 
+/* Defined in t-platt_multieval.c and t-platt_multieval_threaded.c */
+#ifndef _arb_div_si_si
+#define _arb_div_si_si _arb_div_si_si
 static void
 _arb_div_si_si(arb_t res, slong a, slong b, slong prec)
 {
     arb_set_si(res, a);
     arb_div_si(res, res, b, prec);
 }
+#endif
 
-int main(void)
+TEST_FUNCTION_START(acb_dirichlet_platt_multieval_threaded, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("platt_multieval_threaded....");
-    fflush(stdout);
-    flint_randinit(state);
 
     /* Check a specific combination of parameter values that is relatively fast
      * to evaluate and that has relatively tight bounds. */
@@ -139,9 +139,5 @@ int main(void)
         _arb_vec_clear(v2, N);
     }
 
-    flint_randclear(state);
-    flint_cleanup_master();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

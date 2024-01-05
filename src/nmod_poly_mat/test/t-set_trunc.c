@@ -9,9 +9,8 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "ulong_extras.h"
+#include "test_helpers.h"
 #include "nmod_poly_mat.h"
-
 
 void test_with_dims(ulong m, ulong n, flint_rand_t state)
 {
@@ -46,7 +45,7 @@ void test_with_dims(ulong m, ulong n, flint_rand_t state)
                 flint_printf("FAIL:\n");
                 nmod_poly_mat_print(a, "X"), flint_printf("\n\n");
                 nmod_poly_mat_print(b, "X"), flint_printf("\n\n");
-                printf("truncation length %ld\n\n", len);
+                flint_printf("truncation length %wd\n\n", len);
                 fflush(stdout);
                 flint_abort();
             }
@@ -63,7 +62,7 @@ void test_with_dims(ulong m, ulong n, flint_rand_t state)
         nmod_poly_mat_print(a, "X"), flint_printf("\n\n");
         nmod_poly_mat_print(b, "X"), flint_printf("\n\n");
         nmod_poly_mat_print(c, "X"), flint_printf("\n\n");
-        printf("truncation length %ld\n\n", len);
+        flint_printf("truncation length %wd\n\n", len);
         fflush(stdout);
         flint_abort();
     }
@@ -76,7 +75,7 @@ void test_with_dims(ulong m, ulong n, flint_rand_t state)
         flint_printf("FAIL (aliasing):\n");
         nmod_poly_mat_print(a, "X"), flint_printf("\n\n");
         nmod_poly_mat_print(c, "X"), flint_printf("\n\n");
-        printf("truncation length %ld\n\n", len);
+        flint_printf("truncation length %wd\n\n", len);
         fflush(stdout);
         flint_abort();
     }
@@ -86,14 +85,8 @@ void test_with_dims(ulong m, ulong n, flint_rand_t state)
     nmod_poly_mat_clear(c);
 }
 
-int
-main(void)
+TEST_FUNCTION_START(nmod_poly_mat_set_trunc, state)
 {
-    FLINT_TEST_INIT(state);
-
-    flint_printf("set_trunc....");
-    fflush(stdout);
-
     for (int i = 0; i < 100 * flint_test_multiplier(); i++)
     {
         test_with_dims(2,5,state);
@@ -101,8 +94,5 @@ main(void)
         test_with_dims(5,2,state);
     }
 
-    FLINT_TEST_CLEANUP(state);
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

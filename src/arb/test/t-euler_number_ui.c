@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2021 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpz_vec.h"
 #include "ulong_extras.h"
 #include "arith.h"
@@ -41,15 +42,9 @@ divisor_table_odd(unsigned int * tab, slong len)
     }
 }
 
-int main(void)
+TEST_FUNCTION_START(arb_euler_number_ui, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("euler_number_ui....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     {
         slong nmax;
@@ -143,8 +138,5 @@ int main(void)
         _fmpz_vec_clear(En, nmax);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2022 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include <math.h>
@@ -22,8 +22,7 @@ fmpzi_divrem_approx(fmpzi_t q, fmpzi_t r, const fmpzi_t x, const fmpzi_t y)
 
     if (ybits == 0)
     {
-        flint_printf("fmpzi_divrem_approx: division by zero\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "fmpzi_divrem_approx: division by zero\n");
     }
 
     if (xbits == 0)
@@ -81,29 +80,20 @@ fmpzi_divrem_approx(fmpzi_t q, fmpzi_t r, const fmpzi_t x, const fmpzi_t y)
 
         if (r != NULL)
         {
-            if (r == x)
-            {
-                fmpz_submul_si(fmpzi_realref(r), fmpzi_realref(y), qa);
-                fmpz_addmul_si(fmpzi_realref(r), fmpzi_imagref(y), qb);
-                fmpz_submul_si(fmpzi_realref(r), fmpzi_imagref(y), qa);
-                fmpz_addmul_si(fmpzi_realref(r), fmpzi_realref(y), qb);
+            fmpzi_t t, u;
 
-                fmpz_set_d(fmpzi_realref(q), qa);
-                fmpz_set_d(fmpzi_imagref(q), qb);
-            }
-            else
-            {
-                fmpzi_t t;
-                fmpzi_init(t);
+            fmpzi_init(t);
+            fmpzi_init(u);
 
-                fmpz_set_d(fmpzi_realref(q), qa);
-                fmpz_set_d(fmpzi_imagref(q), qb);
+            fmpz_set_d(fmpzi_realref(u), qa);
+            fmpz_set_d(fmpzi_imagref(u), qb);
 
-                fmpzi_mul(t, q, y);
-                fmpzi_sub(r, x, t);
+            fmpzi_mul(t, u, y);
+            fmpzi_sub(r, x, t);
+            fmpzi_swap(q, u);
 
-                fmpzi_clear(t);
-            }
+            fmpzi_clear(t);
+            fmpzi_clear(u);
         }
         else
         {

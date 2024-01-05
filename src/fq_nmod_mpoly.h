@@ -15,7 +15,7 @@
 #ifdef FQ_NMOD_MPOLY_INLINES_C
 #define FQ_NMOD_MPOLY_INLINE
 #else
-#define FQ_NMOD_MPOLY_INLINE static __inline__
+#define FQ_NMOD_MPOLY_INLINE static inline
 #endif
 
 #include "nmod_mpoly.h"
@@ -338,9 +338,7 @@ FQ_NMOD_MPOLY_INLINE
 void fq_nmod_mpoly_swap(fq_nmod_mpoly_t A, fq_nmod_mpoly_t B,
                                                  const fq_nmod_mpoly_ctx_t ctx)
 {
-   fq_nmod_mpoly_struct t = *A;
-   *A = *B;
-   *B = t;
+    FLINT_SWAP(fq_nmod_mpoly_struct, *A, *B);
 }
 
 
@@ -1025,9 +1023,7 @@ FQ_NMOD_MPOLY_INLINE
 void fq_nmod_mpoly_univar_swap(fq_nmod_mpoly_univar_t A,
                        fq_nmod_mpoly_univar_t B, const fq_nmod_mpoly_ctx_t ctx)
 {
-   fq_nmod_mpoly_univar_struct t = *A;
-   *A = *B;
-   *B = t;
+    FLINT_SWAP(fq_nmod_mpoly_univar_struct, *A, *B);
 }
 
 FQ_NMOD_MPOLY_INLINE

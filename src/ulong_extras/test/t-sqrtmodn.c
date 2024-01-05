@@ -9,18 +9,12 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint.h"
+#include "test_helpers.h"
 #include "ulong_extras.h"
 
-int main(void)
+TEST_FUNCTION_START(n_sqrtmodn, state)
 {
     int i, result;
-    FLINT_TEST_INIT(state);
-
-    flint_printf("sqrtmodn....");
-    fflush(stdout);
-
-
 
     for (i = 0; i < 1000 * flint_test_multiplier(); i++) /* Test random squares mod n */
     {
@@ -31,9 +25,8 @@ int main(void)
         int btest;
         n_factor_t fac;
 
-        bits = n_randint(state, 18) + 2;
+        bits = n_randint(state, 18) + 1;
         n = n_randtest_bits(state, bits);
-        if (n == 0) n = 1;
         b = n_randtest(state) % n;
 
         n_factor_init(&fac);
@@ -125,8 +118,5 @@ int main(void)
         flint_free(sqrt);
     }
 
-    FLINT_TEST_CLEANUP(state);
-
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

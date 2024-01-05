@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #ifndef GR_POLY_H
@@ -15,7 +15,7 @@
 #ifdef GR_POLY_INLINES_C
 #define GR_POLY_INLINE
 #else
-#define GR_POLY_INLINE static __inline__
+#define GR_POLY_INLINE static inline
 #endif
 
 #include "fmpz_types.h"
@@ -55,9 +55,7 @@ GR_POLY_INLINE slong gr_poly_length(const gr_poly_t poly, gr_ctx_t ctx)
 GR_POLY_INLINE void
 gr_poly_swap(gr_poly_t poly1, gr_poly_t poly2, gr_ctx_t ctx)
 {
-    gr_poly_struct t = *poly1;
-    *poly1 = *poly2;
-    *poly2 = t;
+    FLINT_SWAP(gr_poly_struct, *poly1, *poly2);
 }
 
 void gr_poly_fit_length(gr_poly_t poly, slong len, gr_ctx_t ctx);
@@ -311,6 +309,15 @@ WARN_UNUSED_RESULT int _gr_poly_compose_series_divconquer(gr_ptr res, gr_srcptr 
 WARN_UNUSED_RESULT int gr_poly_compose_series_divconquer(gr_poly_t res, const gr_poly_t poly1, const gr_poly_t poly2, slong n, gr_ctx_t ctx);
 WARN_UNUSED_RESULT int _gr_poly_compose_series(gr_ptr res, gr_srcptr poly1, slong len1, gr_srcptr poly2, slong len2, slong n, gr_ctx_t ctx);
 WARN_UNUSED_RESULT int gr_poly_compose_series(gr_poly_t res, const gr_poly_t poly1, const gr_poly_t poly2, slong n, gr_ctx_t ctx);
+
+WARN_UNUSED_RESULT int _gr_poly_revert_series_lagrange(gr_ptr res, gr_srcptr f, slong flen, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int gr_poly_revert_series_lagrange(gr_poly_t res, const gr_poly_t f, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int _gr_poly_revert_series_lagrange_fast(gr_ptr res, gr_srcptr f, slong flen, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int gr_poly_revert_series_lagrange_fast(gr_poly_t res, const gr_poly_t f, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int _gr_poly_revert_series_newton(gr_ptr res, gr_srcptr f, slong flen, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int gr_poly_revert_series_newton(gr_poly_t res, const gr_poly_t f, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int _gr_poly_revert_series(gr_ptr res, gr_srcptr f, slong flen, slong n, gr_ctx_t ctx);
+WARN_UNUSED_RESULT int gr_poly_revert_series(gr_poly_t res, const gr_poly_t f, slong n, gr_ctx_t ctx);
 
 WARN_UNUSED_RESULT int _gr_poly_derivative(gr_ptr res, gr_srcptr poly, slong len, gr_ctx_t ctx);
 WARN_UNUSED_RESULT int gr_poly_derivative(gr_poly_t res, const gr_poly_t poly, gr_ctx_t ctx);

@@ -1,32 +1,22 @@
-/*=============================================================================
-
-    This file is part of Antic.
-
-    Antic is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License (LGPL) as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. See <http://www.gnu.org/licenses/>.
-
-=============================================================================*/
-/******************************************************************************
-
+/*
     Copyright (C) 2012 William Hart
 
-******************************************************************************/
+    This file is part of FLINT.
 
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
+
+#include "test_helpers.h"
 #include "qfb.h"
 
-int main(void)
+TEST_FUNCTION_START(qfb_nucomp, state)
 {
     int result;
-    flint_rand_t state;
     qfb * forms;
     slong i, k, i1, i2, i3, num;
-
-    printf("nucomp....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* Check discriminants of composed forms are correct */
     for (i = 1; i < 10000; i++)
@@ -59,7 +49,7 @@ int main(void)
               {
                  printf("FAIL:\n");
                  printf("Incorrect discriminant\n");
-                 fmpz_print(D); printf(" should be %ld\n", -i);
+                 fmpz_print(D); flint_printf(" should be %wd\n", -i);
                  flint_abort();
               }
            }
@@ -133,9 +123,5 @@ int main(void)
         qfb_array_clear(&forms, num);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-
-    printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

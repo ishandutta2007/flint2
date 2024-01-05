@@ -1,29 +1,20 @@
-/*=============================================================================
-
-    This file is part of Antic.
-
-    Antic is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License (LGPL) as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. See <http://www.gnu.org/licenses/>.
-
-=============================================================================*/
-/******************************************************************************
-
+/*
     Copyright (C) 2020 Vincent Delecroix
 
-******************************************************************************/
+    This file is part of FLINT.
 
-#include "nf.h"
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
+
+#include "test_helpers.h"
 #include "nf_elem.h"
 
-int
-main(void)
+TEST_FUNCTION_START(nf_elem_mul_div_fmpq, state)
 {
     int i, result;
-    flint_rand_t state;
-
-    flint_randinit(state);
 
     /* test b + c - c = b */
     for (i = 0; i < 100; i++)
@@ -103,8 +94,5 @@ main(void)
         nf_clear(nf);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-
-    return 0;
+    TEST_FUNCTION_END(state);
 }

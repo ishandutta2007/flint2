@@ -1,19 +1,22 @@
 /*
     Copyright (C) 2011 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpz.h"
 #include "fmpz_vec.h"
 #include "arith.h"
 #include "partitions.h"
 
+/* Defined in t-partitions_fmpz_ui.c and t-partitions_fmpz_ui_threaded.c */
+#define testdata testdata_fmpz_ui
 /* Values mod 10^9 generated with Sage */
 static const ulong testdata[][2] =
 {
@@ -87,15 +90,9 @@ static const ulong testdata[][2] =
 
 #define NUM 5000
 
-int main(void)
+TEST_FUNCTION_START(partitions_fmpz_ui, state)
 {
-    flint_rand_t state;
     slong i;
-
-    flint_printf("partitions_fmpz_ui....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     {
         fmpz_t p;
@@ -139,9 +136,6 @@ int main(void)
         fmpz_clear(p);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-
+#undef testdata

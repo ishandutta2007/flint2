@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2021 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arb_hypgeom.h"
 
 void
@@ -33,15 +34,9 @@ rising_algorithm(arb_t res, const arb_t x, ulong n, ulong m, slong prec, int alg
         arb_hypgeom_rising_ui(res, x, n, prec);
 }
 
-int main(void)
+TEST_FUNCTION_START(arb_hypgeom_rising_ui, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("rising_ui....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 10000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -101,8 +96,5 @@ int main(void)
         arb_clear(yayb);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

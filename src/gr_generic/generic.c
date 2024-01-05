@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "fmpq.h"
@@ -46,6 +46,35 @@ truth_t gr_generic_ctx_predicate_true(gr_ctx_t ctx)
 truth_t gr_generic_ctx_predicate_false(gr_ctx_t ctx)
 {
     return T_FALSE;
+}
+
+truth_t gr_generic_ctx_is_zero_ring(gr_ctx_t ctx)
+{
+    gr_ptr t;
+    int status;
+    truth_t res;
+
+    if (gr_ctx_is_integral_domain(ctx) == T_TRUE)
+    {
+        return T_FALSE;
+    }
+    else
+    {
+        GR_TMP_INIT(t, ctx);
+
+        status = gr_one(t, ctx);
+
+        if (status & GR_UNABLE)
+            res = T_UNKNOWN;
+        else if (status & GR_DOMAIN)
+            res = T_FALSE;
+        else
+            res = gr_is_zero(t, ctx);
+    }
+
+    GR_TMP_CLEAR(t, ctx);
+
+    return res;
 }
 
 void
@@ -847,7 +876,6 @@ truth_t gr_generic_is_invertible(gr_srcptr x, gr_ctx_t ctx)
     return T_UNKNOWN;
 }
 
-
 int gr_generic_div_fmpz(gr_ptr res, gr_srcptr x, const fmpz_t y, gr_ctx_t ctx)
 {
     gr_ptr t;
@@ -953,6 +981,60 @@ int gr_generic_divexact(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
 {
     return gr_div(res, x, y, ctx);
 }
+
+truth_t gr_generic_div_nonunique(gr_ptr res, gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
+{
+    truth_t zero;
+    int status;
+
+    /* 0 = q * y has 0 as a solution, even if y = 0 */
+    zero = gr_is_zero(x, ctx);
+    if (zero == T_TRUE)
+    {
+        status = gr_zero(res, ctx);
+        return (status == GR_SUCCESS) ? T_TRUE : T_UNKNOWN;
+    }
+
+    status = gr_div(res, x, y, ctx);
+
+    if (status == GR_SUCCESS)
+        return T_TRUE;
+
+    /* In an integral domain, div should find the unique quotient
+       or assert that none exists. */
+    if (gr_ctx_is_integral_domain(ctx) == T_TRUE)
+        return status;
+
+    /* The ring would need to implement this case. */
+    return GR_UNABLE;
+}
+
+truth_t gr_generic_divides(gr_srcptr x, gr_srcptr y, gr_ctx_t ctx)
+{
+    gr_ptr t;
+    truth_t zero;
+    int status;
+
+    zero = gr_is_zero(y, ctx);
+    if (zero == T_TRUE)
+        return T_TRUE;
+
+    GR_TMP_INIT(t, ctx);
+    status = gr_div(t, y, x, ctx);
+    GR_TMP_CLEAR(t, ctx);
+
+    if (status == GR_SUCCESS)
+        return T_TRUE;
+
+    if (gr_ctx_is_integral_domain(ctx) != T_TRUE)
+        return T_UNKNOWN;
+
+    if (status == GR_DOMAIN)
+        return T_FALSE;
+
+    return T_UNKNOWN;
+}
+
 
 /* at least catch square roots -- todo: generalize to nth roots */
 int
@@ -2379,6 +2461,7 @@ const gr_method_tab_input _gr_generic_methods[] =
     {GR_METHOD_CTX_IS_FINITE,           (gr_funcptr) gr_generic_ctx_predicate},
     {GR_METHOD_CTX_IS_FINITE_CHARACTERISTIC,        (gr_funcptr) gr_generic_ctx_predicate},
     {GR_METHOD_CTX_IS_ALGEBRAICALLY_CLOSED,         (gr_funcptr) gr_generic_ctx_predicate},
+    {GR_METHOD_CTX_IS_ZERO_RING,        (gr_funcptr) gr_generic_ctx_is_zero_ring},
 
     {GR_METHOD_CTX_IS_ORDERED_RING,     (gr_funcptr) gr_generic_ctx_predicate},
 
@@ -2483,6 +2566,9 @@ const gr_method_tab_input _gr_generic_methods[] =
     {GR_METHOD_DIVEXACT_FMPQ,           (gr_funcptr) gr_generic_div_fmpq},
     {GR_METHOD_DIVEXACT_OTHER,          (gr_funcptr) gr_generic_div_other},
     {GR_METHOD_OTHER_DIVEXACT,          (gr_funcptr) gr_generic_other_div},
+
+    {GR_METHOD_DIV_NONUNIQUE,           (gr_funcptr) gr_generic_div_nonunique},
+    {GR_METHOD_DIVIDES,                 (gr_funcptr) gr_generic_divides},
 
     {GR_METHOD_IS_INVERTIBLE,           (gr_funcptr) gr_generic_is_invertible},
     {GR_METHOD_INV,                     (gr_funcptr) gr_generic_inv},
@@ -2728,9 +2814,13 @@ void
 gr_method_tab_init(gr_funcptr * methods, gr_method_tab_input * tab)
 {
     slong i;
+    /* Write to a temporary table so that gr_not_implemented entries
+       do not overwrite proper entries if there are multiple threads
+       trying to init the same table simultaneously. */
+    gr_static_method_table tmp;
 
     for (i = 0; i < GR_METHOD_TAB_SIZE; i++)
-        methods[i] = (gr_funcptr) gr_not_implemented;
+        tmp[i] = (gr_funcptr) gr_not_implemented;
 
     /* Assign generic methods as fallbacks */
     for (i = 0; ; i++)
@@ -2739,9 +2829,9 @@ gr_method_tab_init(gr_funcptr * methods, gr_method_tab_input * tab)
             break;
 
         if (_gr_generic_methods[i].index >= GR_METHOD_TAB_SIZE)
-            flint_abort();
+            flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
-        methods[_gr_generic_methods[i].index] = _gr_generic_methods[i].function;
+        tmp[_gr_generic_methods[i].index] = _gr_generic_methods[i].function;
     }
 
     for (i = 0; ; i++)
@@ -2750,8 +2840,10 @@ gr_method_tab_init(gr_funcptr * methods, gr_method_tab_input * tab)
             break;
 
         if (tab[i].index >= GR_METHOD_TAB_SIZE)
-            flint_abort();
+            flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
-        methods[tab[i].index] = tab[i].function;
+        tmp[tab[i].index] = tab[i].function;
     }
+
+    memcpy(methods, tmp, sizeof(gr_static_method_table));
 }

@@ -1,32 +1,32 @@
 /*
     Copyright (C) 2014 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "mpfr.h"
 #include "arf.h"
 #include "mag.h"
 
+/* Defined in t-exp.c and t-expinv.c */
+#ifndef arf_exp
+#define arf_exp arf_exp
 void
 arf_exp(arf_t y, const arf_t x, slong prec, arf_rnd_t rnd)
 {
     _arf_call_mpfr_func(y, NULL, (int (*)(void)) mpfr_exp, x, NULL, prec, rnd);
 }
-int main(void)
+#endif
+
+TEST_FUNCTION_START(mag_expinv, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("expinv....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* test expinv */
     for (iter = 0; iter < 100000 * 0.1 * flint_test_multiplier(); iter++)
@@ -155,9 +155,5 @@ int main(void)
         mag_clear(yb);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

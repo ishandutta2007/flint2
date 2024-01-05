@@ -17,7 +17,7 @@
    inputs, outputs are fully reduced
    NOTE: 2n is not the same as 2b rounded up to nearest limb
 */
-static __inline__ int
+static inline int
 flint_mpn_mulmod_2expp1_internal(mp_ptr xp, mp_srcptr yp, mp_srcptr zp,
     flint_bitcnt_t b, mp_ptr tp)
 {
@@ -31,9 +31,9 @@ flint_mpn_mulmod_2expp1_internal(mp_ptr xp, mp_srcptr yp, mp_srcptr zp,
     flint_mpn_mul_large(tp, yp, n, zp, n);
 #else
     if (yp == zp)
-        mpn_sqr(tp, yp, n);
+        flint_mpn_sqr(tp, yp, n);
     else
-        mpn_mul_n(tp, yp, zp, n);
+        flint_mpn_mul_n(tp, yp, zp, n);
 #endif
 
     if (k == 0)
@@ -81,7 +81,7 @@ flint_mpn_mulmod_2expp1_basecase (mp_ptr xp, mp_srcptr yp, mp_srcptr zp, int c,
         }
         else
         {
-            c = mpn_neg_n(xp, yp, n);
+            c = mpn_neg(xp, yp, n);
             c = mpn_add_1 (xp, xp, n, c);
             xp[n - 1] &= GMP_NUMB_MASK >> k;
         }
@@ -90,7 +90,7 @@ flint_mpn_mulmod_2expp1_basecase (mp_ptr xp, mp_srcptr yp, mp_srcptr zp, int c,
     {
         if (cz == 0)
 	     {
-            c = mpn_neg_n(xp, zp, n);
+            c = mpn_neg(xp, zp, n);
             c = mpn_add_1(xp, xp, n, c);
             xp[n - 1] &= GMP_NUMB_MASK >> k;
         }

@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2021 Fredrik Johansson
 
-    This file is part of Calcium.
+    This file is part of FLINT.
 
-    Calcium is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #ifndef FEXPR_H
@@ -15,7 +15,7 @@
 #ifdef FEXPR_INLINES_C
 #define FEXPR_INLINE
 #else
-#define FEXPR_INLINE static __inline__
+#define FEXPR_INLINE static inline
 #endif
 
 #ifdef __cplusplus
@@ -147,11 +147,8 @@ fexpr_set(fexpr_t res, const fexpr_t expr)
 FEXPR_INLINE void
 fexpr_swap(fexpr_t a, fexpr_t b)
 {
-    fexpr_struct tmp = *a;
-    *a = *b;
-    *b = tmp;
+    FLINT_SWAP(fexpr_struct, *a, *b);
 }
-
 
 FEXPR_INLINE int
 _mpn_equal(mp_srcptr a, mp_srcptr b, slong len)

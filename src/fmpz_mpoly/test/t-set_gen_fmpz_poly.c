@@ -1,27 +1,21 @@
 /*
     Copyright (C) 2021 Fredrik Johansson
 
-    This file is part of Calcium.
+    This file is part of FLINT.
 
-    Calcium is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpz_poly.h"
-#include "calcium.h"
 #include "fmpz_mpoly.h"
 
-int main(void)
+TEST_FUNCTION_START(fmpz_mpoly_set_gen_fmpz_poly, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("fmpz_mpoly_set_gen_fmpz_poly...");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 1000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -74,8 +68,5 @@ int main(void)
         fmpz_mpoly_ctx_clear(ctx);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

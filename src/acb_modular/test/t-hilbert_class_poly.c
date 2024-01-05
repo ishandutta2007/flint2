@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2015 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "nmod_poly.h"
 #include "fmpz_poly.h"
 #include "acb.h"
@@ -114,11 +115,8 @@ static const int hilbert_poly_values_2[] = {
     0, 0,
 };
 
-int main(void)
+TEST_FUNCTION_START(acb_modular_hilbert_class_poly, state)
 {
-    flint_printf("hilbert_class_poly....");
-    fflush(stdout);
-
     {
         slong i;
         mp_limb_t c;
@@ -164,8 +162,5 @@ int main(void)
         nmod_poly_clear(hdp);
     }
 
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

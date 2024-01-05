@@ -3,12 +3,12 @@
     Copyright (C) 2020 D.H.J. Polymath
     Copyright (C) 2023 Albin Ahlbäck
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "thread_support.h"
@@ -109,7 +109,7 @@ acb_dft_rad2_precomp_inplace_threaded(acb_ptr v, const acb_dft_rad2_t rad2, slon
         }
 
         if (i != t)
-            flint_throw(FLINT_ERROR, "unequal i=%wd, t=%wd in %s\n", i, t, __FUNCTION__);
+            flint_throw(FLINT_ERROR, "unequal i=%wd, t=%wd in %s\n", i, t, __func__);
 
         for (i = 0; i < num_workers; i++)
             thread_pool_wait(global_thread_pool, handles[i]);

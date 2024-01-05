@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2016 Pascal Molin
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "dirichlet.h"
 
 static ulong
@@ -21,12 +22,9 @@ vec_diff(ulong * v, ulong * ref, ulong nv)
     return 0;
 }
 
-int main(void)
+TEST_FUNCTION_START(dirichlet_vec, state)
 {
     ulong q;
-
-    flint_printf("vec....");
-    fflush(stdout);
 
     for (q = 2; q < 600; q ++)
     {
@@ -72,8 +70,6 @@ int main(void)
                 flint_abort();
             }
 
-
-
         } while (dirichlet_char_next(chi, G) >= 0);
 
         flint_free(v1);
@@ -82,7 +78,5 @@ int main(void)
         dirichlet_char_clear(chi);
     }
 
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

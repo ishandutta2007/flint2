@@ -1,16 +1,20 @@
 /*
     Copyright (C) 2020, 2021 Fredrik Johansson
 
-    This file is part of Calcium.
+    This file is part of FLINT.
 
-    Calcium is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "ca_poly.h"
 
+/* Defined in t-div_series.c, t-exp_series.c, t-inv_series.c, t-log_series.c */
+#ifndef ca_poly_truncate
+#define ca_poly_truncate ca_poly_truncate
 /* todo */
 void
 ca_poly_truncate(ca_poly_t poly, slong newlen, ca_ctx_t ctx)
@@ -24,16 +28,11 @@ ca_poly_truncate(ca_poly_t poly, slong newlen, ca_ctx_t ctx)
         _ca_poly_normalise(poly, ctx);
     }
 }
+#endif
 
-int main(void)
+TEST_FUNCTION_START(ca_poly_log_series, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("log_series....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 1000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -88,8 +87,5 @@ int main(void)
         ca_ctx_clear(ctx);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

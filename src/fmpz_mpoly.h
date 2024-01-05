@@ -16,7 +16,7 @@
 #ifdef FMPZ_MPOLY_INLINES_C
 #define FMPZ_MPOLY_INLINE
 #else
-#define FMPZ_MPOLY_INLINE static __inline__
+#define FMPZ_MPOLY_INLINE static inline
 #endif
 
 #include "fmpz_vec.h"
@@ -198,9 +198,7 @@ FMPZ_MPOLY_INLINE
 void fmpz_mpoly_swap(fmpz_mpoly_t A,
                                 fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx)
 {
-   fmpz_mpoly_struct t = *A;
-   *A = *B;
-   *B = t;
+    FLINT_SWAP(fmpz_mpoly_struct, *A, *B);
 }
 
 FMPZ_MPOLY_INLINE
@@ -432,26 +430,15 @@ slong fmpz_mpoly_length(const fmpz_mpoly_t A, const fmpz_mpoly_ctx_t ctx)
     return A->length;
 }
 
-void fmpz_mpoly_resize(fmpz_mpoly_t A, slong new_length,
-                                                   const fmpz_mpoly_ctx_t ctx);
+void fmpz_mpoly_resize(fmpz_mpoly_t A, slong new_length, const fmpz_mpoly_ctx_t ctx);
 
-void fmpz_mpoly_get_term_coeff_fmpz(fmpz_t c, const fmpz_mpoly_t A,
-                                          slong i, const fmpz_mpoly_ctx_t ctx);
+void fmpz_mpoly_get_term_coeff_fmpz(fmpz_t c, const fmpz_mpoly_t A, slong i, const fmpz_mpoly_ctx_t ctx);
+ulong fmpz_mpoly_get_term_coeff_ui(const fmpz_mpoly_t A, slong i, const fmpz_mpoly_ctx_t ctx);
+slong fmpz_mpoly_get_term_coeff_si(const fmpz_mpoly_t A, slong i, const fmpz_mpoly_ctx_t ctx);
 
-ulong fmpz_mpoly_get_term_coeff_ui(           const fmpz_mpoly_t A,
-                                          slong i, const fmpz_mpoly_ctx_t ctx);
-
-slong fmpz_mpoly_get_term_coeff_si(           const fmpz_mpoly_t A,
-                                          slong i, const fmpz_mpoly_ctx_t ctx);
-
-void fmpz_mpoly_set_term_coeff_fmpz(fmpz_mpoly_t A,
-                          slong i, const fmpz_t c, const fmpz_mpoly_ctx_t ctx);
-
-void fmpz_mpoly_set_term_coeff_ui(fmpz_mpoly_t A,
-                                 slong i, ulong c, const fmpz_mpoly_ctx_t ctx);
-
-void fmpz_mpoly_set_term_coeff_si(fmpz_mpoly_t A,
-                                 slong i, slong c, const fmpz_mpoly_ctx_t ctx);
+void fmpz_mpoly_set_term_coeff_fmpz(fmpz_mpoly_t A, slong i, const fmpz_t c, const fmpz_mpoly_ctx_t ctx);
+void fmpz_mpoly_set_term_coeff_ui(fmpz_mpoly_t A, slong i, ulong c, const fmpz_mpoly_ctx_t ctx);
+void fmpz_mpoly_set_term_coeff_si(fmpz_mpoly_t A, slong i, slong c, const fmpz_mpoly_ctx_t ctx);
 
 FMPZ_MPOLY_INLINE
 int fmpz_mpoly_term_exp_fits_ui(const fmpz_mpoly_t A, slong i,
@@ -772,12 +759,16 @@ int fmpz_mpoly_divides(fmpz_mpoly_t Q,
 int fmpz_mpoly_divides_monagan_pearce(fmpz_mpoly_t Q,
        const fmpz_mpoly_t A, const fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx);
 
+#if FLINT_KNOW_STRONG_ORDER
+#define fmpz_mpoly_divides_heap_threaded fmpz_mpoly_divides_heap_threaded
 int fmpz_mpoly_divides_heap_threaded(fmpz_mpoly_t Q,
        const fmpz_mpoly_t A, const fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx);
 
+#define _fmpz_mpoly_divides_heap_threaded_pool _fmpz_mpoly_divides_heap_threaded_pool
 int _fmpz_mpoly_divides_heap_threaded_pool(fmpz_mpoly_t Q,
        const fmpz_mpoly_t A, const fmpz_mpoly_t B, const fmpz_mpoly_ctx_t ctx,
                         const thread_pool_handle * handles, slong num_handles);
+#endif
 
 slong _fmpz_mpoly_divides_array(fmpz ** poly1, ulong ** exp1,
          slong * alloc, const fmpz * poly2, const ulong * exp2, slong len2,
@@ -994,9 +985,7 @@ FMPZ_MPOLY_INLINE
 void fmpz_mpoly_univar_swap(fmpz_mpoly_univar_t A, fmpz_mpoly_univar_t B,
                                                     const fmpz_mpoly_ctx_t ctx)
 {
-   fmpz_mpoly_univar_struct t = *A;
-   *A = *B;
-   *B = t;
+    FLINT_SWAP(fmpz_mpoly_univar_struct, *A, *B);
 }
 
 FMPZ_MPOLY_INLINE
@@ -1157,7 +1146,6 @@ typedef struct
 } fmpz_mpolyd_ctx_struct;
 
 typedef fmpz_mpolyd_ctx_struct fmpz_mpolyd_ctx_t[1];
-
 
 void fmpz_mpolyd_init(fmpz_mpolyd_t poly, slong nvars);
 
@@ -1412,10 +1400,6 @@ void _fmpz_mpoly_addmul_uiuiui_fmpz(ulong * c, slong d1, slong d2)
     p2 = FLINT_SIGN_EXT(p[1]);
     add_sssaaaaaa(c[2], c[1], c[0], c[2], c[1], c[0], p2, p[1], p[0]);
 }
-
-
-mpz_srcptr _fmpz_mpoly_get_mpz_signed_uiuiui(ulong * sm, fmpz x,
-                                                                    mpz_ptr t);
 
 /******************************************************************************
 

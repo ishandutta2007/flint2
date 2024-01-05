@@ -1,22 +1,22 @@
 /*
     Copyright (C) 2016 Pascal Molin
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "acb_dirichlet.h"
 
 #define nq 5
 #define nx 3
 
-int main(void)
+TEST_FUNCTION_START(acb_dirichlet_l_hurwitz, state)
 {
-
     slong i, j;
     ulong q[nq] = {3, 5, 61, 91, 800};
     ulong m[nq] = {2, 4, 11, 2, 3};
@@ -70,9 +70,6 @@ int main(void)
         "0.970337207245832214408380510793679653538607483205616894",
         "-1.43652482351673593824956935036654893593947145947637807"
     };
-
-    flint_printf("l_hurwitz....");
-    fflush(stdout);
 
     x = _acb_vec_init(nx);
 
@@ -138,8 +135,5 @@ int main(void)
     acb_clear(res);
     _acb_vec_clear(x, nx);
 
-
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

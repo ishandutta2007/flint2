@@ -26,14 +26,14 @@ fmpz_mat_set_perm(fmpz_mat_t X, const slong * perm, const fmpz_mat_t B)
     if (X == B)
     {
         /* Not implemented */
-        flint_abort();
+        flint_throw(FLINT_ERROR, "(%s): Not implemented\n", __func__);
     }
     else
     {
         slong i, j;
 
         if (perm == NULL)
-            flint_abort();
+            flint_throw(FLINT_ERROR, "(%s): perm == NULL\n", __func__);
 
         for (i = 0; i < fmpz_mat_nrows(B); i++)
             for (j = 0; j < fmpz_mat_ncols(B); j++)
@@ -103,7 +103,7 @@ fmpz_mat_solve_fflu_precomp(fmpz_mat_t X,
                     if (uden != 0) /* see #1029 */
                     {
                        norm = flint_clz(uden);
-                       invert_limb(dinv, uden << norm);
+                       dinv = n_preinvert_limb_prenorm(uden << norm);
                     } else
                        dinv = 0;
                     den1 = fmpz_is_one(diag + i - 1);
@@ -236,7 +236,7 @@ fmpz_mat_solve_fflu_precomp(fmpz_mat_t X,
                     if (uden != 0) /* see #1029 */
                     {
                        norm = flint_clz(uden);
-                       invert_limb(dinv, uden << norm);
+                       dinv = n_preinvert_limb_prenorm(uden << norm);
                     } else
                        dinv = 0;
 

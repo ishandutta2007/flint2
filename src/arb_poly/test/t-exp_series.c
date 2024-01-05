@@ -1,28 +1,23 @@
 /*
     Copyright (C) 2012 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpq_poly.h"
 #include "arb_poly.h"
 
 FLINT_DLL extern slong arb_poly_newton_exp_cutoff;
 
-int main(void)
+TEST_FUNCTION_START(arb_poly_exp_series, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("exp_series....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* compare with fmpq_poly */
     for (iter = 0; iter < 10000 * 0.1 * flint_test_multiplier(); iter++)
@@ -191,8 +186,5 @@ int main(void)
         arb_poly_clear(c);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

@@ -18,7 +18,7 @@
 #ifdef FMPZ_POLY_INLINES_C
 #define FMPZ_POLY_INLINE
 #else
-#define FMPZ_POLY_INLINE static __inline__
+#define FMPZ_POLY_INLINE static inline
 #endif
 
 #include "fmpz_types.h"
@@ -987,21 +987,7 @@ void _fmpz_poly_compose_series(fmpz * res, const fmpz * poly1, slong len1,
 void fmpz_poly_compose_series(fmpz_poly_t res,
                     const fmpz_poly_t poly1, const fmpz_poly_t poly2, slong n);
 
-void _fmpz_poly_revert_series_lagrange(fmpz * Qinv, const fmpz * Q, slong Qlen, slong n);
-
-void fmpz_poly_revert_series_lagrange(fmpz_poly_t Qinv, const fmpz_poly_t Q, slong n);
-
-void _fmpz_poly_revert_series_lagrange_fast(fmpz * Qinv, const fmpz * Q, slong Qlen, slong n);
-
-void fmpz_poly_revert_series_lagrange_fast(fmpz_poly_t Qinv,
-    const fmpz_poly_t Q, slong n);
-
-void _fmpz_poly_revert_series_newton(fmpz * Qinv, const fmpz * Q, slong Qlen, slong n);
-
-void fmpz_poly_revert_series_newton(fmpz_poly_t Qinv, const fmpz_poly_t Q, slong n);
-
 void _fmpz_poly_revert_series(fmpz * Qinv, const fmpz * Q, slong Qlen, slong n);
-
 void fmpz_poly_revert_series(fmpz_poly_t Qinv, const fmpz_poly_t Q, slong n);
 
 /*  Square root  *************************************************************/

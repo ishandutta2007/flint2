@@ -9,18 +9,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "perm.h"
 #include "nmod_mat.h"
 
-int
-main(void)
+TEST_FUNCTION_START(nmod_mat_permute_rows, state)
 {
     slong m, n, mod, rep;
-    FLINT_TEST_INIT(state);
-
-
-    flint_printf("permute_rows....");
-    fflush(stdout);
 
     for (rep = 0; rep < 1000 * flint_test_multiplier(); rep++)
     {
@@ -53,15 +48,16 @@ main(void)
         {
             if (perm_store && perm_store[i] != perm[perm_act[i]])
             {
-                flint_printf("FAIL: auxiliary permutation not correctly permuted by perm_act\n");
-                flint_printf("input permutation:\n");
-                _perm_print(perm, m);
-                flint_printf("acting permutation:\n");
-                _perm_print(perm_act, m);
-                flint_printf("resulting permutation:\n");
-                _perm_print(perm_store, m);
-                fflush(stdout);
-                flint_abort();
+                flint_throw(FLINT_TEST_FAIL,
+                        "auxiliary permutation not correctly permuted by perm_act\n"
+                        "m = %wd\n"
+                        "input permutation: %{slong*}\n"
+                        "acting permutation: %{slong*}\n"
+                        "resulting permutation: %{slong*}\n",
+                        m,
+                        perm, m,
+                        perm_act, m,
+                        perm_store, m);
             }
             for (j = 0; j < n; j++)
             {
@@ -85,8 +81,5 @@ main(void)
         _perm_clear(perm_store);
     }
 
-    FLINT_TEST_CLEANUP(state);
-
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

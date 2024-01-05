@@ -12,7 +12,7 @@
 #include "fmpz.h"
 #include "fmpz_poly.h"
 
-static __inline__
+static inline
 slong _fmpz_poly_num_real_roots_quadratic(const fmpz * pol, slong len)
 {
     if ((fmpz_sgn(pol) * fmpz_sgn(pol + 2) < 0) ||
@@ -41,7 +41,7 @@ slong _fmpz_poly_num_real_roots_quadratic(const fmpz * pol, slong len)
     }
 }
 
-static __inline__
+static inline
 slong _num_roots_quartic_positive_discriminant(const fmpz * p)
 {
     /* more delicate quartic case */
@@ -126,7 +126,7 @@ slong _fmpz_poly_num_real_roots(const fmpz * pol, slong len)
         fmpz_clear(disc);
 
         if (s == 0)
-            flint_throw(FLINT_ERROR, "non-squarefree polynomial in %s\n", __FUNCTION__);
+            flint_throw(FLINT_ERROR, "non-squarefree polynomial in %s\n", __func__);
         else if (s > 0)
         {
             if (len == 5)
@@ -156,7 +156,7 @@ slong _fmpz_poly_num_real_roots(const fmpz * pol, slong len)
 slong fmpz_poly_num_real_roots(const fmpz_poly_t pol)
 {
     if (fmpz_poly_is_zero(pol))
-        flint_throw(FLINT_ERROR, "zero polynomial in %s\n", __FUNCTION__);
+        flint_throw(FLINT_ERROR, "zero polynomial in %s\n", __func__);
 
     return _fmpz_poly_num_real_roots(pol->coeffs, pol->length);
 }

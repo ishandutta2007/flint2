@@ -158,10 +158,12 @@ void nmod_mpoly_remainder_strongtest(const nmod_mpoly_t r, const nmod_mpoly_t g,
 
         if (divides)
         {
-            flint_printf("nmod_mpoly_remainder_strongtest FAILED i = %wd\n", i);
-            flint_printf("rem ");nmod_mpoly_print_pretty(r, NULL, ctx); printf("\n\n");
-            flint_printf("den ");nmod_mpoly_print_pretty(g, NULL, ctx); printf("\n\n");
-            flint_abort();
+            flint_throw(FLINT_ERROR, "nmod_mpoly_remainder_strongtest FAILED i = %wd\n"
+                    "rem %s\n\n"
+                    "den %s\n\n",
+                    i,
+                    nmod_mpoly_get_str_pretty(r, NULL, ctx),
+                    nmod_mpoly_get_str_pretty(g, NULL, ctx));
         }
     }
 
@@ -198,7 +200,7 @@ void nmod_mpolyd_print(nmod_mpolyd_t poly)
             ulong m = poly->deg_bounds[j];
             ulong e = k % m;
             k = k / m;
-            flint_printf("*x%wd^%wd", j, e);
+            flint_printf("*x%wd^%wu", j, e);
         }
         FLINT_ASSERT(k == 0);
         first = 0;

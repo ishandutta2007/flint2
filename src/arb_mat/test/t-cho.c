@@ -1,18 +1,23 @@
 /*
     Copyright (C) 2016 Arb authors
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpq.h"
 #include "fmpq_mat.h"
 #include "arb_mat.h"
 
+/* Defined in t-cho.c, t-inv_cho_precomp.c, t-inv_ldl_precomp.c, t-ldl.c,
+   t-solve_cho_precomp.c, t-solve_ldl_precomp.c, t-spd_inv.c, t-spd_solve.c */
+#ifndef _fmpq_mat_randtest_positive_semidefinite
+#define _fmpq_mat_randtest_positive_semidefinite _fmpq_mat_randtest_positive_semidefinite
 void
 _fmpq_mat_randtest_positive_semidefinite(fmpq_mat_t mat, flint_rand_t state, flint_bitcnt_t bits)
 {
@@ -28,8 +33,11 @@ _fmpq_mat_randtest_positive_semidefinite(fmpq_mat_t mat, flint_rand_t state, fli
     fmpq_mat_clear(R);
     fmpq_mat_clear(RT);
 }
+#endif
 
-
+/* Defined in t-cho.c, t-ldl.c, t-lu.c, t-lu_recursive.c */
+#ifndef fmpq_mat_is_invertible
+#define fmpq_mat_is_invertible fmpq_mat_is_invertible
 int fmpq_mat_is_invertible(const fmpq_mat_t A)
 {
     int r;
@@ -40,16 +48,11 @@ int fmpq_mat_is_invertible(const fmpq_mat_t A)
     fmpq_clear(t);
     return r;
 }
+#endif
 
-int main(void)
+TEST_FUNCTION_START(arb_mat_cho, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("cho....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* check special matrices */
     {
@@ -192,8 +195,5 @@ int main(void)
         arb_mat_clear(T);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

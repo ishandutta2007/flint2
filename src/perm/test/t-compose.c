@@ -9,18 +9,12 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint.h"
+#include "test_helpers.h"
 #include "perm.h"
-#include "ulong_extras.h"
 
-int main(void)
+TEST_FUNCTION_START(perm_compose, state)
 {
     int i;
-    FLINT_TEST_INIT(state);
-
-
-    flint_printf("compose....");
-    fflush(stdout);
 
     /* check (b^(-1))(b(a)) = a */
     for (i = 0; i < 10000; i++)
@@ -43,13 +37,17 @@ int main(void)
 
         if (!_perm_equal(a, c, n))
         {
-            flint_printf("FAIL:\n");
-            flint_printf("a: "); _perm_print(a, n); flint_printf("\n\n");
-            flint_printf("b: "); _perm_print(b, n); flint_printf("\n\n");
-            flint_printf("binv: "); _perm_print(binv, n); flint_printf("\n\n");
-            flint_printf("c: "); _perm_print(c, n); flint_printf("\n\n");
-            fflush(stdout);
-            flint_abort();
+            flint_throw(FLINT_TEST_FAIL,
+                    "n = %wd\n"
+                    "a = %{slong*}\n\n"
+                    "b = %{slong*}\n\n"
+                    "binv = %{slong*}\n\n"
+                    "c = %{slong*}\n\n",
+                    n,
+                    a, n,
+                    b, n,
+                    binv, n,
+                    c, n);
         }
 
         _perm_clear(a);
@@ -77,12 +75,15 @@ int main(void)
 
         if (!_perm_equal(b, c, n))
         {
-            flint_printf("FAIL:\n");
-            flint_printf("a: "); _perm_print(a, n); flint_printf("\n\n");
-            flint_printf("b: "); _perm_print(b, n); flint_printf("\n\n");
-            flint_printf("c: "); _perm_print(c, n); flint_printf("\n\n");
-            fflush(stdout);
-            flint_abort();
+            flint_throw(FLINT_TEST_FAIL,
+                    "n = %wd\n"
+                    "a = %{slong*}\n\n"
+                    "b = %{slong*}\n\n"
+                    "c = %{slong*}\n\n",
+                    n,
+                    a, n,
+                    b, n,
+                    c, n);
         }
 
         _perm_clear(a);
@@ -90,8 +91,5 @@ int main(void)
         _perm_clear(c);
     }
 
-    FLINT_TEST_CLEANUP(state);
-
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

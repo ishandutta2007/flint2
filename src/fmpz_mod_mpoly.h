@@ -15,7 +15,7 @@
 #ifdef FMPZ_MOD_MPOLY_INLINES_C
 #define FMPZ_MOD_MPOLY_INLINE
 #else
-#define FMPZ_MOD_MPOLY_INLINE static __inline__
+#define FMPZ_MOD_MPOLY_INLINE static inline
 #endif
 
 #include "nmod_types.h"
@@ -202,9 +202,7 @@ FMPZ_MOD_MPOLY_INLINE
 void fmpz_mod_mpoly_swap(fmpz_mod_mpoly_t A, fmpz_mod_mpoly_t B,
                                                 const fmpz_mod_mpoly_ctx_t ctx)
 {
-    fmpz_mod_mpoly_struct t = *A;
-    *A = *B;
-    *B = t;
+    FLINT_SWAP(fmpz_mod_mpoly_struct, *A, *B);
 }
 
 /* Constants *****************************************************************/
@@ -856,9 +854,7 @@ FMPZ_MOD_MPOLY_INLINE
 void fmpz_mod_mpoly_univar_swap(fmpz_mod_mpoly_univar_t A,
                      fmpz_mod_mpoly_univar_t B, const fmpz_mod_mpoly_ctx_t ctx)
 {
-    fmpz_mod_mpoly_univar_struct t = *A;
-    *A = *B;
-    *B = t;
+    FLINT_SWAP(fmpz_mod_mpoly_univar_struct, *A, *B);
 }
 
 FMPZ_MOD_MPOLY_INLINE

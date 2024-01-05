@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "fmpq.h"
@@ -587,8 +587,20 @@ gr_series_inv(gr_series_t res, const gr_series_t x, gr_series_ctx_t sctx, gr_ctx
     xerr = x->error;
     err = xerr;
 
+    if (xlen == 0 && sctx->mod == 0)
+        return gr_series_zero(res, sctx, cctx);
+
     if (xlen == 0 && xerr == SERIES_ERR_EXACT)
+    {
+        truth_t zero = gr_ctx_is_zero_ring(cctx);
+
+        if (zero == T_TRUE)
+            return gr_series_zero(res, sctx, cctx);
+        if (zero == T_UNKNOWN)
+            return GR_UNABLE;
+
         return GR_DOMAIN;
+    }
 
     if (xlen == 0 || xerr == 0)
         return GR_UNABLE;
@@ -1994,7 +2006,7 @@ gr_ctx_init_gr_series_mod(gr_ctx_t ctx, gr_ctx_t base_ring, slong mod)
     ctx->size_limit = WORD_MAX;
 
     if (mod >= SERIES_ERR_EXACT)
-        flint_abort();
+        flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
     SERIES_CTX(ctx)->base_ring = (gr_ctx_struct *) base_ring;
     SERIES_CTX(ctx)->var = (char *) default_var;

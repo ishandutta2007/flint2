@@ -9,10 +9,12 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint.h"
+#include "test_helpers.h"
+#include "gmpcompat.h"
 #include "ulong_extras.h"
 
-
+#ifndef n_factorial_mod2_foolproof
+#define n_factorial_mod2_foolproof n_factorial_mod2_foolproof
 static mp_limb_t
 n_factorial_mod2_foolproof(ulong n, mp_limb_t p, mp_limb_t pinv)
 {
@@ -26,40 +28,61 @@ n_factorial_mod2_foolproof(ulong n, mp_limb_t p, mp_limb_t pinv)
 
     return prod;
 }
+#endif
 
-int main(void)
+TEST_FUNCTION_START(n_factorial_mod2_preinv, state)
 {
-    mp_limb_t n;
-    int j;
+    int ix;
 
-    FLINT_TEST_INIT(state);
-
-    flint_printf("factorial_mod2_preinv....");
-    fflush(stdout);
-
-    for (n = 0; n < 100 * flint_test_multiplier(); n++)
+    /* n is small (n < 1000) */
+    for (ix = 0; ix < 100 * flint_test_multiplier(); ix++)
     {
-        mp_limb_t p, pinv, x, y;
+        mp_limb_t n, p, pinv, x, y;
 
-        for (j = 0; j < 10; j++)
+        n = n_randint(state, 1000);
+        p = n_randtest_not_zero(state);
+        pinv = n_preinvert_limb(p);
+
+        x = n_factorial_mod2_preinv(n, p, pinv);
+        y = n_factorial_mod2_foolproof(n, p, pinv);
+
+        if (x != y)
         {
-            p = n_randtest_not_zero(state);
-            pinv = n_preinvert_limb(p);
-            x = n_factorial_mod2_preinv(n, p, pinv);
-            y = n_factorial_mod2_foolproof(n, p, pinv);
-
-            if (x != y)
-            {
-                flint_printf("FAIL:\n");
-                flint_printf("n = %wu\np = %wu\nx = %wu\ny = %wu\n", n, p, x, y);
-                fflush(stdout);
-                flint_abort();
-            }
+            flint_printf("FAIL:\n"
+                         "n = %wu\n"
+                         "p = %wu\n"
+                         "x = %wu\n"
+                         "y = %wu\n",
+                         n, p, x, y);
+            flint_abort();
         }
     }
 
-    FLINT_TEST_CLEANUP(state);
+    /* FIXME: Fix some fast test that tests this for random big n */
+    /* n is big */
+#if FLINT64
+    {
+        mp_limb_t n, p, pinv, x, y;
 
-    flint_printf("PASS\n");
-    return 0;
+        n = UWORD(1000003);
+        p = UWORD(187263871632876172);
+        pinv = n_preinvert_limb(p);
+
+        x = n_factorial_mod2_preinv(n, p, pinv);
+        y = UWORD(31386460113503852);
+
+        if (x != y)
+        {
+            flint_printf("FAIL:\n"
+                         "n = %wu\n"
+                         "p = %wu\n"
+                         "x = %wu\n"
+                         "y = %wu\n",
+                         n, p, x, y);
+            flint_abort();
+        }
+    }
+#endif
+
+    TEST_FUNCTION_END(state);
 }

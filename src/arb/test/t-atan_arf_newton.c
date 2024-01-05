@@ -1,17 +1,20 @@
 /*
     Copyright (C) 2014 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include <mpfr.h>
 #include "arb.h"
 
+#ifndef arb_atan_arf_via_mpfr
+#define arb_atan_arf_via_mpfr arb_atan_arf_via_mpfr
 void
 arb_atan_arf_via_mpfr(arb_t z, const arf_t x, slong prec)
 {
@@ -34,16 +37,11 @@ arb_atan_arf_via_mpfr(arb_t z, const arf_t x, slong prec)
     mpfr_clear(t);
     mpfr_clear(u);
 }
+#endif
 
-int main(void)
+TEST_FUNCTION_START(arb_atan_arf_newton, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("atan_arf_bb....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     for (iter = 0; iter < 5000 * 0.1 * flint_test_multiplier(); iter++)
     {
@@ -110,8 +108,5 @@ int main(void)
         arb_clear(z);
     }
 
-    flint_randclear(state);
-    flint_cleanup_master();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

@@ -1,34 +1,22 @@
-/*=============================================================================
-
-    This file is part of Antic.
-
-    Antic is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License (LGPL) as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. See <http://www.gnu.org/licenses/>.
-
-=============================================================================*/
-/******************************************************************************
-
+/*
     Copyright (C) 2018 Tommy Hofmann
                   2020 Julian Rüth
 
-******************************************************************************/
+    This file is part of FLINT.
 
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
+
+#include "test_helpers.h"
 #include "fmpq_mat.h"
-#include "nf.h"
 #include "nf_elem.h"
 
-int
-main(void)
+TEST_FUNCTION_START(nf_elem_rep_mat, state)
 {
     int i;
-    flint_rand_t state;
-
-    flint_printf("rep_mat....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* test mul_gen(b) = a * b, where a is the generator */
     for (i = 0; i < 100 * flint_test_multiplier(); i++)
@@ -82,7 +70,6 @@ main(void)
             }
         }
 
-
         nf_elem_clear(a, nf);
         nf_elem_clear(b, nf);
         nf_elem_clear(p1, nf);
@@ -93,8 +80,5 @@ main(void)
         nf_clear(nf);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

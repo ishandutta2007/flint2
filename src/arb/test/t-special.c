@@ -1,26 +1,24 @@
 /*
     Copyright (C) 2013 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arb.h"
 
 #define ASSERT(cond) if (!(cond)) { flint_printf("FAIL: %d\n", __LINE__); flint_abort(); }
 
-int main(void)
+TEST_FUNCTION_START(arb_special, state)
 {
     arb_t zero, pos, neg, pos_inf, neg_inf, pos_inf_err, neg_inf_err,
       zero_pm_inf, pos_pm_inf, neg_pm_inf,
       indet_exact, indet_pos_rad, indet_inf_rad;
-
-    flint_printf("special....");
-    fflush(stdout);
 
     arb_init(zero);
     arb_init(pos);
@@ -76,7 +74,6 @@ int main(void)
     ASSERT(!arb_is_nonzero(indet_exact));
     ASSERT(!arb_is_nonzero(indet_pos_rad));
     ASSERT(!arb_is_nonzero(indet_inf_rad));
-
 
     ASSERT(!arb_is_positive(zero));
     ASSERT(arb_is_positive(pos));
@@ -632,8 +629,5 @@ int main(void)
     arb_clear(indet_pos_rad);
     arb_clear(indet_inf_rad);
 
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2012 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include <stdlib.h>
 #include <string.h>
 #include "arb.h"
@@ -148,23 +149,17 @@ const char * testdata_invalid[] = {
     NULL,
 };
 
-int main(void)
+TEST_FUNCTION_START(arb_set_str, state)
 {
-    flint_rand_t state;
     arb_t t, u, v;
     double x;
     int error, bracket;
     char tmp[256];
     slong i, j;
 
-    flint_printf("set_str....");
-    fflush(stdout);
-    flint_randinit(state);
-
     arb_init(t);
     arb_init(u);
     arb_init(v);
-    flint_randinit(state);
 
     for (i = 0; testdata_floats[i] != NULL; i++)
     {
@@ -299,8 +294,6 @@ int main(void)
     arb_clear(t);
     arb_clear(u);
     arb_clear(v);
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+
+    TEST_FUNCTION_END(state);
 }

@@ -15,7 +15,7 @@
 #ifdef FQ_ZECH_MPOLY_INLINES_C
 #define FQ_ZECH_MPOLY_INLINE
 #else
-#define FQ_ZECH_MPOLY_INLINE static __inline__
+#define FQ_ZECH_MPOLY_INLINE static inline
 #endif
 
 #include "fq_zech_poly.h"
@@ -140,9 +140,6 @@ typedef fq_zech_mpoly_geobucket_struct fq_zech_mpoly_geobucket_t[1];
 void fq_zech_mpoly_ctx_init_deg(fq_zech_mpoly_ctx_t ctx, slong nvars,
                                  const ordering_t ord, mp_limb_t p, slong deg);
 
-void fq_zech_mpoly_ctx_init(fq_zech_mpoly_ctx_t ctx, slong nvars,
-                              const ordering_t ord, const fq_zech_ctx_t fqctx);
-
 void fq_zech_mpoly_ctx_clear(fq_zech_mpoly_ctx_t ctx);
 
 FQ_ZECH_MPOLY_INLINE
@@ -256,9 +253,7 @@ FQ_ZECH_MPOLY_INLINE
 void fq_zech_mpoly_swap(fq_zech_mpoly_t A, fq_zech_mpoly_t B,
                                                  const fq_zech_mpoly_ctx_t ctx)
 {
-   fq_zech_mpoly_struct t = *A;
-   *A = *B;
-   *B = t;
+    FLINT_SWAP(fq_zech_mpoly_struct, *A, *B);
 }
 
 
@@ -734,9 +729,7 @@ FQ_ZECH_MPOLY_INLINE
 void fq_zech_mpoly_univar_swap(fq_zech_mpoly_univar_t A,
                        fq_zech_mpoly_univar_t B, const fq_zech_mpoly_ctx_t ctx)
 {
-   fq_zech_mpoly_univar_struct t = *A;
-   *A = *B;
-   *B = t;
+    FLINT_SWAP(fq_zech_mpoly_univar_struct, *A, *B);
 }
 
 FQ_ZECH_MPOLY_INLINE

@@ -1,27 +1,21 @@
 /*
     Copyright (C) 2020 Fredrik Johansson
 
-    This file is part of Calcium.
+    This file is part of FLINT.
 
-    Calcium is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "ca.h"
 #include "ca_ext.h"
 #include "ca_field.h"
 
-int main(void)
+TEST_FUNCTION_START(ca_field_init_clear, state)
 {
-    flint_rand_t state;
-
-    flint_printf("field_init_clear....");
-    fflush(stdout);
-
-    flint_randinit(state);
-
     {
         ca_ctx_t ctx;
         ca_field_t K;
@@ -52,9 +46,5 @@ int main(void)
         qqbar_clear(t);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

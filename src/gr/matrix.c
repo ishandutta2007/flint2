@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 /* Matrices over generic rings */
@@ -532,8 +532,8 @@ _gr_ctx_init_matrix(gr_ctx_t ctx, gr_ctx_t base_ring, int all_sizes, slong nrows
     ctx->sizeof_elem = sizeof(gr_mat_struct);
     ctx->size_limit = WORD_MAX;
 
-    if (nrows < 0) flint_abort();
-    if (ncols < 0) flint_abort();
+    if (nrows < 0 || ncols < 0)
+        flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
     MATRIX_CTX(ctx)->base_ring = (gr_ctx_struct *) base_ring;
     MATRIX_CTX(ctx)->all_sizes = all_sizes;

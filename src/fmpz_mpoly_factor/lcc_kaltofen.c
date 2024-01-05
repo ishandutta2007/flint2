@@ -168,7 +168,7 @@ static void _make_bases_coprime(
             continue;
         A->num--;
         fmpz_poly_swap(A->p + i, A->p + A->num);
-        SLONG_SWAP(A->exp[i], A->exp[A->num]);
+        FLINT_SWAP(slong, A->exp[i], A->exp[A->num]);
         i--;
     }
 
@@ -178,7 +178,7 @@ static void _make_bases_coprime(
             continue;
         B->num--;
         fmpz_poly_swap(B->p + i, B->p + B->num);
-        SLONG_SWAP(B->exp[i], B->exp[B->num]);
+        FLINT_SWAP(slong, B->exp[i], B->exp[B->num]);
         i--;
     }
 
@@ -434,8 +434,7 @@ void fmpz_mpoly_factor_divexact_mpoly_pow_ui(
         sgn = fmpz_sgn(A->exp + A->num);
         if (sgn < 0)
         {
-            flint_printf("non-exact division fmpz_mpoly_factor_divexact_mpoly_pow_ui");
-            flint_abort();
+            flint_throw(FLINT_ERROR, "non-exact division fmpz_mpoly_factor_divexact_mpoly_pow_ui");
         }
         else if (sgn > 0)
         {
@@ -456,8 +455,7 @@ void fmpz_mpoly_factor_divexact_mpoly_pow_ui(
 
     if (!fmpz_mpoly_is_fmpz(b, ctx))
     {
-        flint_printf("non-exact division fmpz_mpoly_factor_divexact_mpoly_pow_ui");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "non-exact division fmpz_mpoly_factor_divexact_mpoly_pow_ui");
     }
 
     fmpz_mpoly_clear(b_copy, ctx);

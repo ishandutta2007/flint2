@@ -26,6 +26,7 @@ Domain properties
               truth_t gr_ctx_is_algebraically_closed(gr_ctx_t ctx)
               truth_t gr_ctx_is_finite_characteristic(gr_ctx_t ctx)
               truth_t gr_ctx_is_ordered_ring(gr_ctx_t ctx)
+              truth_t gr_ctx_is_zero_ring(gr_ctx_t ctx)
 
     Returns whether the structure satisfies the respective
     mathematical property.
@@ -82,7 +83,8 @@ Base rings and fields
 .. function:: void gr_ctx_init_random(gr_ctx_t ctx, flint_rand_t state)
 
     Initializes *ctx* to a random ring. This will currently
-    only generate base rings.
+    only generate base rings and composite rings over certain
+    simple base rings.
 
 .. function:: void gr_ctx_init_fmpz(gr_ctx_t ctx)
 

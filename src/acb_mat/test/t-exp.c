@@ -1,20 +1,20 @@
 /*
     Copyright (C) 2013 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "fmpq.h"
 #include "fmpq_mat.h"
 #include "acb_mat.h"
 
-void
-_fmpq_mat_randtest_for_exp(fmpq_mat_t mat, flint_rand_t state, flint_bitcnt_t bits)
+void _fmpq_mat_randtest_for_exp(fmpq_mat_t mat, flint_rand_t state, flint_bitcnt_t bits)
 {
     slong i, j;
     slong d, l, u;
@@ -34,15 +34,9 @@ _fmpq_mat_randtest_for_exp(fmpq_mat_t mat, flint_rand_t state, flint_bitcnt_t bi
     }
 }
 
-int main(void)
+TEST_FUNCTION_START(acb_mat_exp, state)
 {
     slong iter;
-    flint_rand_t state;
-
-    flint_printf("exp....");
-    fflush(stdout);
-
-    flint_randinit(state);
 
     /* check exp(A)*exp(c*A) = exp((1+c)*A) */
     for (iter = 0; iter < 500 * 0.1 * flint_test_multiplier(); iter++)
@@ -106,9 +100,5 @@ int main(void)
         acb_mat_clear(G);
     }
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

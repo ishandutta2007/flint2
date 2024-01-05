@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 /* Vectors over generic rings */
@@ -116,9 +116,20 @@ vector_gr_vec_randtest(gr_vec_t res, flint_rand_t state, gr_ctx_t ctx)
 }
 
 truth_t
+gr_generic_vec_equal(gr_srcptr vec1, gr_srcptr vec2, slong len, gr_ctx_t ctx);
+
+truth_t
 vector_gr_vec_equal(const gr_vec_t vec1, const gr_vec_t vec2, gr_ctx_t ctx)
 {
-    return gr_poly_equal((gr_poly_struct *) vec1, (gr_poly_struct *) vec2, ENTRY_CTX(ctx));
+    slong len1, len2;
+
+    len1 = vec1->length;
+    len2 = vec2->length;
+
+    if (len1 != len2)
+        return T_FALSE;
+
+    return _gr_vec_equal(vec1->entries, vec2->entries, len1, ENTRY_CTX(ctx));
 }
 
 int
@@ -364,6 +375,38 @@ _gr_vec_apply_const(gr_ptr res, gr_method_constant_op f, slong len, gr_ctx_t ctx
     return status;
 }
 
+static truth_t
+_gr_vec_all_binary_predicate(gr_method_binary_predicate f, gr_srcptr x, gr_srcptr y, slong len, gr_ctx_t ctx)
+{
+    truth_t res, res1;
+    slong i, sz;
+
+    sz = ctx->sizeof_elem;
+    res = T_TRUE;
+
+    for (i = 0; i < len; i++)
+    {
+        res1 = f(GR_ENTRY(x, i, sz), GR_ENTRY(y, i, sz), ctx);
+
+        if (res1 == T_FALSE)
+            return T_FALSE;
+
+        if (res1 == T_UNKNOWN)
+            res = T_UNKNOWN;
+    }
+
+    return res;
+}
+
+truth_t
+vector_gr_vec_divides(const gr_vec_t x, const gr_vec_t y, gr_ctx_t ctx)
+{
+    if (x->length != y->length)
+        return T_FALSE;
+
+    return _gr_vec_all_binary_predicate(GR_BINARY_PREDICATE(ENTRY_CTX(ctx), DIVIDES), x->entries, y->entries, x->length, ENTRY_CTX(ctx));
+}
+
 #define DEF_CONSTANT_OP_FROM_OP(op, OP) \
 int \
 vector_gr_vec_ ## op(gr_vec_t res, gr_ctx_t ctx) \
@@ -415,6 +458,7 @@ vector_gr_vec_ ## op(gr_vec_t res, const gr_vec_t x, gr_ctx_t ctx) \
     return _gr_vec_apply_unary(res->entries, f, x->entries, xlen, ENTRY_CTX(ctx)); \
 } \
 
+DEF_UNARY_OP_FROM_ENTRY_OP(inv, INV)
 DEF_UNARY_OP_FROM_ENTRY_OP(sqrt, SQRT)
 DEF_UNARY_OP_FROM_ENTRY_OP(rsqrt, RSQRT)
 DEF_UNARY_OP_FROM_ENTRY_OP(floor, FLOOR)
@@ -579,6 +623,36 @@ DEF_BINARY_OP(div)
 DEF_BINARY_OP(divexact)
 DEF_BINARY_OP(pow)
 
+#define DEF_BINARY_OP_NO_TYPE_VARIANTS(op) \
+int \
+vector_gr_vec_ ## op(gr_vec_t res, const gr_vec_t x, const gr_vec_t y, gr_ctx_t ctx) \
+{ \
+    slong xlen = x->length; \
+ \
+    if (xlen != y->length) \
+        return GR_DOMAIN; \
+ \
+    if (res->length != xlen) \
+        gr_vec_set_length(res, xlen, ENTRY_CTX(ctx)); \
+ \
+    return _gr_vec_## op(res->entries, x->entries, y->entries, xlen, ENTRY_CTX(ctx)); \
+} \
+
+int
+_gr_vec_div_nonunique(gr_ptr res, gr_srcptr x, gr_srcptr y, slong len, gr_ctx_t ctx)
+{
+    int status = GR_SUCCESS;
+    slong sz = ctx->sizeof_elem;
+    slong i;
+
+    for (i = 0; i < len; i++)
+        status |= gr_div_nonunique(GR_ENTRY(res, i, sz), GR_ENTRY(x, i, sz), GR_ENTRY(y, i, sz), ctx);
+
+    return status;
+}
+
+DEF_BINARY_OP_NO_TYPE_VARIANTS(div_nonunique)
+
 
 /* todo: all versions */
 
@@ -650,6 +724,8 @@ gr_method_tab_input _gr_vec_methods_input[] =
     {GR_METHOD_MUL_OTHER,   (gr_funcptr) vector_gr_vec_mul_other},
     {GR_METHOD_OTHER_MUL,   (gr_funcptr) vector_gr_vec_other_mul},
 
+    {GR_METHOD_INV,         (gr_funcptr) vector_gr_vec_inv},
+
     {GR_METHOD_DIV,         (gr_funcptr) vector_gr_vec_div},
     {GR_METHOD_DIV_UI,      (gr_funcptr) vector_gr_vec_div_ui},
     {GR_METHOD_DIV_SI,      (gr_funcptr) vector_gr_vec_div_si},
@@ -657,6 +733,9 @@ gr_method_tab_input _gr_vec_methods_input[] =
     {GR_METHOD_DIV_FMPQ,    (gr_funcptr) vector_gr_vec_div_fmpq},
     {GR_METHOD_DIV_OTHER,   (gr_funcptr) vector_gr_vec_div_other},
     {GR_METHOD_OTHER_DIV,   (gr_funcptr) vector_gr_vec_other_div},
+
+    {GR_METHOD_DIV_NONUNIQUE,   (gr_funcptr) vector_gr_vec_div_nonunique},
+    {GR_METHOD_DIVIDES,         (gr_funcptr) vector_gr_vec_divides},
 
     {GR_METHOD_DIVEXACT,        (gr_funcptr) vector_gr_vec_divexact},
     {GR_METHOD_DIVEXACT_UI,     (gr_funcptr) vector_gr_vec_divexact_ui},
@@ -703,7 +782,8 @@ _gr_ctx_init_vector(gr_ctx_t ctx, gr_ctx_t base_ring, int all_sizes, slong n)
     ctx->sizeof_elem = sizeof(gr_vec_struct);
     ctx->size_limit = WORD_MAX;
 
-    if (n < 0) flint_abort();
+    if (n < 0)
+        flint_throw(FLINT_ERROR, "(%s)\n", __func__);
 
     VECTOR_CTX(ctx)->base_ring = (gr_ctx_struct *) base_ring;
     VECTOR_CTX(ctx)->all_sizes = all_sizes;

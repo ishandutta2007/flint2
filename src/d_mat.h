@@ -17,7 +17,7 @@
 #ifdef D_MAT_INLINES_C
 #define D_MAT_INLINE
 #else
-#define D_MAT_INLINE static __inline__
+#define D_MAT_INLINE static inline
 #endif
 
 
@@ -67,8 +67,6 @@ slong d_mat_ncols(const d_mat_t mat)
 
 void d_mat_init(d_mat_t mat, slong rows, slong cols);
 
-void d_mat_swap(d_mat_t mat1, d_mat_t mat2);
-
 D_MAT_INLINE void
 d_mat_swap_entrywise(d_mat_t mat1, d_mat_t mat2)
 {
@@ -78,7 +76,7 @@ d_mat_swap_entrywise(d_mat_t mat1, d_mat_t mat2)
        double * row1 = mat1->rows[i];
        double * row2 = mat2->rows[i];
        for (j = 0; j < d_mat_ncols(mat1); j++)
-          DOUBLE_SWAP(row1[j], row2[j]);
+          FLINT_SWAP(double, row1[j], row2[j]);
     }
 }
 
@@ -89,10 +87,6 @@ void d_mat_clear(d_mat_t mat);
 int d_mat_equal(const d_mat_t mat1, const d_mat_t mat2);
 
 int d_mat_approx_equal(const d_mat_t mat1, const d_mat_t mat2, double eps);
-
-int d_mat_is_zero(const d_mat_t mat);
-
-int d_mat_is_approx_zero(const d_mat_t mat, double eps);
 
 D_MAT_INLINE
 int d_mat_is_empty(const d_mat_t mat)
@@ -135,11 +129,7 @@ void d_mat_swap_rows(d_mat_t mat, slong r, slong s)
 {
     if (r != s)
     {
-        double * u;
-
-        u = mat->rows[s];
-        mat->rows[s] = mat->rows[r];
-        mat->rows[r] = u;
+        FLINT_SWAP(double *, mat->rows[r], mat->rows[s]);
     }
 }
 

@@ -1,30 +1,25 @@
 /*
     Copyright (C) 2012 Fredrik Johansson
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "ulong_extras.h"
 #include "nmod_poly.h"
-#include "nmod_vec.h"
 #include "fmpz_extras.h"
 #include "bernoulli.h"
 
-int main(void)
+TEST_FUNCTION_START(bernoulli_rev, state)
 {
-    flint_rand_t state;
     slong nmax, n, bound, count;
     mp_limb_t p, pinv, m1, m2;
     nmod_poly_t A;
-
-    flint_printf("rev....");
-    fflush(stdout);
-    flint_randinit(state);
 
     bound = 100000 * FLINT_MIN(1.0, 0.1 * flint_test_multiplier());
 
@@ -91,9 +86,5 @@ int main(void)
 
     nmod_poly_clear(A);
 
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }
-

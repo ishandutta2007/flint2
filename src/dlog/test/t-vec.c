@@ -1,14 +1,15 @@
 /*
     Copyright (C) 2016 Pascal Molin
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "nmod.h"
 #include "dlog.h"
 
@@ -38,19 +39,13 @@ dlog_vec_diff(ulong * v, ulong * ref, ulong nv)
     return 0;
 }
 
-int main(void)
+TEST_FUNCTION_START(dlog_vec, state)
 {
     slong bits, nv, iter;
-    flint_rand_t state;
     int f, nf = 4;
     vec_f func[4] = { dlog_vec_trivial, dlog_vec_loop, dlog_vec_eratos,
         dlog_vec_sieve };
     char * n[4] = { "trivial", "loop", "eratos", "sieve" };
-
-
-    flint_printf("vec....");
-    fflush(stdout);
-    flint_randinit(state);
 
     for (bits = 10; bits <= FLINT_MIN(35, FLINT_BITS); bits += 5)
     {
@@ -102,10 +97,7 @@ int main(void)
             flint_free(ref);
             flint_free(v);
         }
-
     }
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+
+    TEST_FUNCTION_END(state);
 }

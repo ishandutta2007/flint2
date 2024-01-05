@@ -6,7 +6,7 @@
     FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "nmod_vec.h"
@@ -681,8 +681,7 @@ gr_ctx_init_fq_nmod(gr_ctx_t ctx, const fmpz_t p, slong d, const char * var)
 
     if (fmpz_bits(p) > FLINT_BITS)
     {
-        flint_printf("gr_ctx_init_fq_nmod: expected a word-size p\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "gr_ctx_init_fq_nmod: expected a word-size p\n");
     }
 
     fq_nmod_ctx = flint_malloc(sizeof(fq_nmod_ctx_struct));

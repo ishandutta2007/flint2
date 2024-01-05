@@ -16,11 +16,18 @@
 
 #include <math.h>
 
-#if defined(__AVX2__)
-# include <x86intrin.h>
-# include <immintrin.h>
-#elif defined(__ARM_NEON)
-# include <arm_neon.h>
+#if defined(__GNUC__)
+# if defined(__AVX2__)
+#  include <x86intrin.h>
+# elif defined(__ARM_NEON)
+#  include <arm_neon.h>
+# endif
+#elif defined(_MSC_VER)
+# if defined(__AVX2__)
+#  include <intrin.h>
+# elif defined(_M_ARM64)
+#  include <arm_neon.h>
+# endif
 #endif
 
 #include "flint.h"
@@ -50,7 +57,13 @@ typedef struct {__m256d e1, e2;} vec8d;
 
 FLINT_FORCE_INLINE void vec4d_print(vec4d a)
 {
+#ifdef _MSC_VER
+    double as[4];
+    _mm256_storeu_pd(as, a);
+    flint_printf("{%f, %f, %f, %f}", as[0], as[1], as[2], as[3]);
+#else
     flint_printf("{%f, %f, %f, %f}", a[0], a[1], a[2], a[3]);
+#endif
 }
 
 FLINT_FORCE_INLINE void vec4n_print(vec4n a)
@@ -152,11 +165,11 @@ FLINT_FORCE_INLINE vec1d vec1d_round(vec1d a) {
     return rint(a);
 }
 
-FLINT_FORCE_INLINE vec1d vec1d_zero() {
+FLINT_FORCE_INLINE vec1d vec1d_zero(void) {
     return 0.0;
 }
 
-FLINT_FORCE_INLINE vec1d vec1d_one() {
+FLINT_FORCE_INLINE vec1d vec1d_one(void) {
     return 1.0;
 }
 
@@ -246,7 +259,13 @@ FLINT_FORCE_INLINE vec1d vec1d_reduce_2n_to_n(vec1d a, vec1d n) {
 /* vec4 *****************************************************/
 
 FLINT_FORCE_INLINE double vec4d_get_index(vec4d a, const int i) {
+#ifdef _MSC_VER
+    double as[4];
+    _mm256_storeu_pd(as, a);
+    return as[i];
+#else
     return a[i];
+#endif
 }
 
 FLINT_FORCE_INLINE vec4d vec4d_load(const double* a) {
@@ -274,7 +293,14 @@ FLINT_FORCE_INLINE void vec4d_store_unaligned(double* z, vec4d a) {
 }
 
 FLINT_FORCE_INLINE int vec4d_same(vec4d a, vec4d b) {
+#ifdef _MSC_VER
+    double as[4], bs[4];
+    _mm256_storeu_pd(as, a);
+    _mm256_storeu_pd(bs, b);
+    return as[0] == bs[0] && as[1] == bs[1] && as[2] == bs[2] && as[3] == bs[3];
+#else
     return a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3];
+#endif
 }
 
 FLINT_FORCE_INLINE vec4d vec4d_set_d(double a) {
@@ -289,11 +315,11 @@ FLINT_FORCE_INLINE vec4d vec4d_round(vec4d a) {
     return _mm256_round_pd(a, 4);
 }
 
-FLINT_FORCE_INLINE vec4d vec4d_zero() {
+FLINT_FORCE_INLINE vec4d vec4d_zero(void) {
     return _mm256_setzero_pd();
 }
 
-FLINT_FORCE_INLINE vec4d vec4d_one() {
+FLINT_FORCE_INLINE vec4d vec4d_one(void) {
     return vec4d_set_d(1);
 }
 
@@ -600,7 +626,7 @@ DEFINE_IT(vec4d)
 
 
 #define EXTEND_VEC_DEF0(U, V, f) \
-FLINT_FORCE_INLINE V V##f() { \
+FLINT_FORCE_INLINE V V##f(void) { \
     U z1 = U##f(); \
     U z2 = U##f(); \
     V z = {z1, z2}; \
@@ -660,7 +686,7 @@ FLINT_FORCE_INLINE vec4n vec4n_addmod_limited(vec4n a, vec4n b, vec4n n)
     vec4n t = vec4n_sub(s, n);
     vec4n m = _mm256_srai_epi32(t, 31);
           m = _mm256_shuffle_epi32(m, 1 + 4*(1 + 4*(3 + 4*(3))));
-    return _mm256_blendv_epi8(t, s, m);  
+    return _mm256_blendv_epi8(t, s, m);
 }
 
 FLINT_FORCE_INLINE vec4n vec4n_addmod(vec4n a, vec4n b, vec4n n)
@@ -672,7 +698,7 @@ FLINT_FORCE_INLINE vec4n vec4n_addmod(vec4n a, vec4n b, vec4n n)
     vec4n t0 = vec4n_sub(m, a);
     vec4n t1 = vec4n_sub(b, tt);
     vec4n t2 = vec4n_sub(t1, t0);
-    return _mm256_blendv_epi8(s, t2, _mm256_cmpgt_epi64(t1, t0));  
+    return _mm256_blendv_epi8(s, t2, _mm256_cmpgt_epi64(t1, t0));
 #else
     vec4n t0 = vec4n_sub(s, n);
     vec4n t1 = vec4n_sub(a, tt);
@@ -745,7 +771,7 @@ FLINT_FORCE_INLINE vec8n vec8n_bit_and(vec8n a, vec8n b) {
 
 
 
-#elif defined(__ARM_NEON)
+#elif defined(__ARM_NEON) || defined(_M_ARM64)
 
 typedef ulong vec1n;
 typedef uint64x2_t vec2n;
@@ -758,7 +784,7 @@ typedef struct {vec2d e1, e2;} vec4d;
 typedef struct {vec4d e1, e2;} vec8d;
 
 #define EXTEND_VEC_DEF0(U, V, f) \
-FLINT_FORCE_INLINE V V##f() { \
+FLINT_FORCE_INLINE V V##f(void) { \
     U z1 = U##f(); \
     U z2 = U##f(); \
     V z = {z1, z2}; return z; \
@@ -831,11 +857,11 @@ FLINT_FORCE_INLINE vec1d vec1d_round(vec1d a) {
     return rint(a);
 }
 
-FLINT_FORCE_INLINE vec1d vec1d_zero() {
+FLINT_FORCE_INLINE vec1d vec1d_zero(void) {
     return 0.0;
 }
 
-FLINT_FORCE_INLINE vec1d vec1d_one() {
+FLINT_FORCE_INLINE vec1d vec1d_one(void) {
     return 1.0;
 }
 
@@ -963,12 +989,12 @@ FLINT_FORCE_INLINE void vec2d_store_aligned(double* z, vec2d a)
     vst1q_f64(z, a);
 }
 
-FLINT_FORCE_INLINE vec2d vec2d_zero()
+FLINT_FORCE_INLINE vec2d vec2d_zero(void)
 {
     return vec2d_set_d(0.0);
 }
 
-FLINT_FORCE_INLINE vec2d vec2d_one()
+FLINT_FORCE_INLINE vec2d vec2d_one(void)
 {
     return vec2d_set_d(1.0);
 }

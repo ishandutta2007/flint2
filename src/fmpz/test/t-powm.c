@@ -10,18 +10,13 @@
     (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
-#include "flint.h"
+#include "test_helpers.h"
 #include "ulong_extras.h"
 #include "fmpz.h"
 
-int
-main(void)
+TEST_FUNCTION_START(fmpz_powm, state)
 {
     int i, result;
-    FLINT_TEST_INIT(state);
-
-    flint_printf("powm....");
-    fflush(stdout);
 
     /* Compare with GMP */
     for (i = 0; i < 10000 * flint_test_multiplier(); i++)
@@ -88,7 +83,7 @@ main(void)
         result = (mpz_cmp(e, f) == 0) && _fmpz_is_canonical(b);
         if (!result)
         {
-            flint_printf("FAIL (cmp f with MPIR e := d^y mod m):\n");
+            flint_printf("FAIL (cmp f with GMP e := d^y mod m):\n");
             gmp_printf("d = %Zd, e = %Zd, f = %Zd, y = %Zd, m = %Zd\n", d, e, f, y, m);
             fflush(stdout);
             flint_abort();
@@ -106,8 +101,5 @@ main(void)
         mpz_clear(y);
     }
 
-    FLINT_TEST_CLEANUP(state);
-
-    flint_printf("PASS\n");
-    return 0;
+    TEST_FUNCTION_END(state);
 }

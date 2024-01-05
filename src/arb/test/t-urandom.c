@@ -1,23 +1,23 @@
 /*
     Copyright (C) 2021 Albin Ahlbäck
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
+#include "test_helpers.h"
 #include "arb.h"
 
 #define N 10000
 
-int main(void)
+TEST_FUNCTION_START(arb_urandom, state)
 {
     slong iter;
     slong prec;
-    flint_rand_t state;
     arb_ptr rand;
     arb_t m; /* mean */
     arb_t s; /* variance */
@@ -25,10 +25,6 @@ int main(void)
     arb_t sp;
     arb_t tmp;
 
-    flint_printf("urandom....");
-    fflush(stdout);
-
-    flint_randinit(state);
     arb_init(m);
     arb_init(s);
     arb_init(mp);
@@ -78,8 +74,6 @@ int main(void)
     arb_clear(mp);
     arb_clear(sp);
     arb_clear(tmp);
-    flint_randclear(state);
-    flint_cleanup();
-    flint_printf("PASS\n");
-    return 0;
+
+    TEST_FUNCTION_END(state);
 }

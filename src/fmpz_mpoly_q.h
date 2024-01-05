@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2020 Fredrik Johansson
 
-    This file is part of Calcium.
+    This file is part of FLINT.
 
-    Calcium is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #ifndef FMPZ_MPOLY_Q_H
@@ -15,7 +15,7 @@
 #ifdef FMPZ_MPOLY_Q_INLINES_C
 #define FMPZ_MPOLY_Q_INLINE
 #else
-#define FMPZ_MPOLY_Q_INLINE static __inline__
+#define FMPZ_MPOLY_Q_INLINE static inline
 #endif
 
 #ifdef __cplusplus
@@ -249,8 +249,7 @@ fmpz_mpoly_gcd_assert_successful(fmpz_mpoly_t res, const fmpz_mpoly_t x, const f
 {
     if (!fmpz_mpoly_gcd(res, x, y, ctx))
     {
-        flint_printf("fmpz_mpoly_gcd failed\n");
-        flint_abort();
+        flint_throw(FLINT_ERROR, "fmpz_mpoly_gcd failed\n");
     }
 }
 

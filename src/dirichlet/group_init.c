@@ -3,12 +3,12 @@
     Copyright (C) 2016 Fredrik Johansson
     Copyright (C) 2016 Pascal Molin
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "dirichlet.h"
@@ -25,7 +25,7 @@ primitive_root_p_and_p2(ulong p)
         return 7;
 
     if (p > UWORD(10000000000000000))
-        flint_throw(FLINT_ERROR, "p > 10^16 not implemented in %s\n", __FUNCTION__);
+        flint_throw(FLINT_ERROR, "p > 10^16 not implemented in %s\n", __func__);
 #endif
 
     return n_primitive_root_prime(p);

@@ -2,12 +2,12 @@
     Copyright (C) 2013 Fredrik Johansson
     Copyright (C) 2023 Albin Ahlbäck
 
-    This file is part of Arb.
+    This file is part of FLINT.
 
-    Arb is free software: you can redistribute it and/or modify it under
+    FLINT is free software: you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License (LGPL) as published
     by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.  See <http://www.gnu.org/licenses/>.
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
 */
 
 #include "thread_support.h"
@@ -72,7 +72,7 @@ arb_mat_mul_threaded(arb_mat_t C, const arb_mat_t A, const arb_mat_t B, slong pr
     bc = arb_mat_ncols(B);
 
     if (ac != br || ar != arb_mat_nrows(C) || bc != arb_mat_ncols(C))
-        flint_throw(FLINT_DOMERR, "incompatible dimensions in %s\n", __FUNCTION__);
+        flint_throw(FLINT_DOMERR, "incompatible dimensions in %s\n", __func__);
 
     if (br == 0)
     {
